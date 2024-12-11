@@ -20,7 +20,9 @@ export default defineNuxtConfig({
 
   plugins: ['~/plugins/axios'],
  
-
+  router: {
+    middleware: ['handle404'],
+  },
   //   nitro: {
   //     devProxy: {
   //         "/api/v1": {
