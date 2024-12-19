@@ -15,22 +15,28 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     'nuxt-icon',
     '@davestewart/nuxt-scrollbar',
-    'nuxt-swiper',
+    'nuxt-swiper'
   ],
 
   plugins: ['~/plugins/axios'],
- 
+
   router: {
-    middleware: ['handle404'],
+    trailingSlash: false // 關閉結尾斜槓的自動補全
+  },
+  generate: {
+    fallback: true // 讓 404 fallback 到這個頁面
   },
   //   nitro: {
-  //     devProxy: {
-  //         "/api/v1": {
-  //             target:"https://cieestage.gogotest.xyz/",
-  //             changeOrigin: true,
-  //             prependPath: true,
-  //         }
-  //     }
+  //     // devProxy: {
+  //     //     "/api/v1": {
+  //     //         target:"https://cieestage.gogotest.xyz/",
+  //     //         changeOrigin: true,
+  //     //         prependPath: true,
+  //     //     }
+  //     // }
+  //     routeRules: {
+  //       '/**': { static: true } // 確保動態路徑被正確捕捉
+  //     },
   // },
   app: {
     head: {
@@ -43,7 +49,6 @@ export default defineNuxtConfig({
       ]
     }
   },
-  
 
-  compatibilityDate: '2024-09-11',
-});
+  compatibilityDate: '2024-09-11'
+})

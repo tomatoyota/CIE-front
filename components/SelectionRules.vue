@@ -37,12 +37,13 @@ const props = defineProps({
           <div>{{ item.content.txt }}</div>
         </template>
         <template v-if="item?.content?.type == 'orderlist'">
-          <ul :class="isIndentRequired ? 'pl-12 -indent-12' : ''">
-            <li v-for="data in item.content.list">
+            <ul :class="[isIndentRequired ? 'pl-12 -indent-12' : '', 'list-none']">
+              <li v-for="data in item.content.list" :key="data.txt" :class="'list-none'">
               {{ data.txt }}
               <template v-if="data?.sublist">
-                <ul class="pl-4" :class="isIndentRequired ? '-indent-4' : ''">
-                  <li v-for="subdata in data.sublist">{{ subdata }}</li>
+                    <ul class="pl-4" :class="[isIndentRequired ? '-indent-4' : '', 'list-none']">
+                      <li v-for="subdata in data.sublist" :key="subdata" :class="'list-none'">
+                    {{ subdata }}</li>
                 </ul>
               </template>
             </li>

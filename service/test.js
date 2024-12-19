@@ -105,6 +105,7 @@ export default {
       return {
         isSuccess: false,
         msg: error.response?.data?.rtnMsg || '發生未知錯誤'
+        // msg: error || '發生未知錯誤'
     };
     }
   },
@@ -117,7 +118,8 @@ export default {
       if (res === null || res.data === null) {
         return {
           isSuccess: false,
-          msg: '未能接收到回應'
+          msg: '未能接收到回應',
+          // data: res.data
         }
       }
 
@@ -307,30 +309,13 @@ async memberUpdatePsd(obj) {
   // 登出
   async userLogout() {
     userHelper.removeLogin()
-
-    // try {
-    //   const res = await api.post('/backend-users/login')
-
-    //   if (res === null || res.data === null) {
-    //     return null
-    //   }
-
-    //   if (res.data.rtnCode !== '0000') {
-    //     return {
-    //       isSuccess: false,
-    //       msg: res.data.rtnMsg
-    //     }
-    //   }
-
-    //   return {
-    //     isSuccess: true
-    //   }
-    // } catch (error) {
-    //   return {
-    //     isSuccess: false,
-    //     // msg: error.response.data.rtnMsg
-    //     msg: error.response?.data?.rtnMsg || '發生未知錯誤'
-    //   }
-    // }
-  }
+  },
+  async backendUserLogout() {
+    try {
+      const response = await api.post('/backend-users/logout')
+      return response.data
+    } catch (error) {
+      return handleError(error)
+    }
+  },
 }

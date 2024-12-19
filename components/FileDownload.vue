@@ -37,7 +37,8 @@ const canDownload = computed(() => !props.isMemberOnly || isLoggedIn.value);
         v-if="isMemberOnly"
         class="ml-4 rounded-[18px] bg-logoColor px-4 py-2 text-sm text-white"
       >
-        會員限定
+        <!-- 會員限定 -->
+         登入下載
       </div>
     </div>
 

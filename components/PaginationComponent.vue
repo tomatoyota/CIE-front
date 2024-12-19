@@ -1,6 +1,6 @@
 <template>
   <div class="pagination-container">
-    <ul class="pagination-list">
+    <ul class="pagination-list list-none">
       <li
         v-for="pageNum in pageLength"
         :key="pageNum"
@@ -50,6 +50,7 @@ watch(
 :deep(.v-pagination__list){
     margin-bottom: 0px;
 } -->
+
 <style scoped>
 .pagination-container {
   display: flex;

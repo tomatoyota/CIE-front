@@ -3,22 +3,19 @@
     <!-- 半透明黑色背景層 -->
     <div :class="overlayClass"></div>
     <div class="d-lg-flex login-container model-width mx-auto my-auto rounded">
+      <NuxtLink to="/">
       <div class="absolute right-4 top-4">
         <Icon
           name="mi:close"
           class="outlinkIcon text-2xl"
-          @click="$emit('closeMenu')"
         />
       </div>
-      
+    </NuxtLink>
       <div v-if="showSusses" class="my-auto">
         <h1 class="mb-10 py-2 text-3xl font-bold">變更密碼</h1>
         <div class="flex flex-col">
           <div class="sussess">
-            <Icon
-              name="mdi-check-circle-outline"
-              class="outlinkIcon mr-4 text-2xl"
-            />
+            <Icon name="mdi-check-circle-outline" class="outlinkIcon mr-4 text-2xl" />
             <div class="flex-1">密碼變更成功</div>
           </div>
           <p class="mb-8">請務必牢記您的密碼，並使用新密碼重新登入</p>
@@ -33,10 +30,7 @@
       <div v-else class="my-auto">
         <h1 class="mb-10 py-2 text-3xl font-bold">變更密碼</h1>
         <div v-show="showErrormsg" class="alert">
-          <Icon
-            name="mdi-close-circle-outline"
-            class="outlinkIcon mr-4 text-2xl"
-          />
+          <Icon name="mdi-close-circle-outline" class="outlinkIcon mr-4 text-2xl" />
 
           <div class="flex-1">{{ rtnMsg }}</div>
         </div>
@@ -78,7 +72,7 @@
                           ? 'humbleicons:eye'
                           : 'humbleicons:eye-close'
                       "
-                      class="outlinkIcon mr-1 text-2xl"
+                      class="outlinkIcon mr-1 text-2xl "
                     />
                   </span>
                 </div>
@@ -168,9 +162,7 @@
                   </span>
                 </div>
               </div>
-              <p v-if="ValidationErr" class="text-xs text-rose-600">
-                {{ rtnMsg }}
-              </p>
+              <p v-if="ValidationErr" class="text-rose-600 text-xs">{{ rtnMsg }}</p>
             </label>
           </div>
 
@@ -264,25 +256,27 @@ export default {
     // 取得 URL 中的 token
     const token = route.params.token
 
+    
     const handleSubmit = async () => {
       showErrormsg.value = false
       showSusses.value = false
-      rtnMsg.value = ''
 
-      const frontUserId = localStorage.getItem('this-user')
-      const cleanUserId = JSON.parse(frontUserId) // 移除多餘的引號
+      const frontUserId = localStorage.getItem('userAccount')
+      console.log('frontUserId3:', frontUserId)
+      // const cleanUserId = JSON.parse(frontUserId) // 移除多餘的引號
+      // console.log('cleanUserId2:', cleanUserId)
       const isPasswordValid = validatePassword()
       // 驗證密碼條件
       if (!isPasswordValid) {
         showErrormsg.value = true
         showSusses.value = false
         console.log('密碼條件不符合')
-
+       
         rtnMsg.value =
-          '密碼必須至少8個字元，包含英文字母、數字，以及特殊符號 (!@#$%^&*)'
+          '密碼必須至少8個字元，包含英文字母、數字，可以有特殊符號 (!@#$%^&*)'
 
-        console.log('showErrormsg:', showErrormsg.value)
-        console.log('rtnMsg:', rtnMsg.value)
+          console.log('showErrormsg:', showErrormsg.value)
+console.log('rtnMsg:', rtnMsg.value)
         return
       }
       // 驗證密碼與確認密碼是否一致
@@ -293,30 +287,31 @@ export default {
         rtnMsg.value = '密碼與確認密碼不一致'
 
         console.log('showErrormsg:', showErrormsg.value)
-        console.log('rtnMsg:', rtnMsg.value)
-
+console.log('rtnMsg:', rtnMsg.value)
+        
         return
       }
 
       const obj = {
-        frontUserId: cleanUserId,
+        frontUserId: frontUserId,
         password: password.value
       }
       try {
         // 呼叫 API 更新密碼
         const response = await testSrv.passwordUpdate(obj)
         if (response.isSuccess === true) {
-          console.log('密碼更新成功:', response)
+          // console.log('密碼更新成功:', response.msg)
           showSusses.value = true
           // router.push('/login') // 密碼更新成功後重定向到登入頁面
         } else {
           showErrormsg.value = true
-          rtnMsg.value = response.data.rtnMsg
+          rtnMsg.value = response.rtnMsg
           console.log('密碼更新失敗:', response.msg)
         }
       } catch (error) {
         showErrormsg.value = true
-        rtnMsg.value = error.response?.data?.rtnMsg || '更新密碼時發生未知錯誤'
+        // rtnMsg.value = error.response?.data?.rtnMsg || '更新密碼時發生未知錯誤'
+        rtnMsg.value = error || '更新密碼時發生未知錯誤'
         // alert('更新密碼時發生錯誤')
         console.error(error)
       }
@@ -328,17 +323,18 @@ export default {
       testSrv
         .userLogout() // 呼叫登出 API，若有 API 需要聯繫後端登出
         .then((response) => {
-          console.log('成功登出')
+          // console.log('成功登出')
           userHelper.removeLogin()
-          userHelper.removeLogin(false)
+          // userHelper.removeLogin(false)
 
           // 導回登入頁面或首頁
           router.push('/')
           window.location.reload()
-          localStorage.setItem('needsLogin', 'true')
         })
         .catch((error) => {
           console.log('登出時發生錯誤：', error)
+          router.push('/')
+          // window.location.reload()
         })
     }
 
@@ -358,7 +354,7 @@ export default {
       loginAgain,
       showErrormsg,
       rtnMsg,
-      showSusses
+      showSusses,
     }
   }
 }
@@ -424,4 +420,5 @@ export default {
   padding: 50px 40px 40px 40px;
   top: 96px;
 } */
+
 </style>

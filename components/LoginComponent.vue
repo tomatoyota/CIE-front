@@ -171,8 +171,8 @@
 
         <!-- 查詢會員證號 -->
         <div v-else-if="currentView === 'accountEnquiry'">
-          <div class="my-auto grid gap-10">
-            <h1 class="mb-2 py-2 text-3xl font-bold">查詢會員證號</h1>
+          <div class="my-auto grid gap-4">
+            <h1 class="py-2 text-3xl font-bold">查詢會員證號</h1>
 
             <!-- 成功時顯示訊息 -->
             <div v-if="showSuccessMsg" class="flex flex-col">
@@ -198,7 +198,7 @@
             </div>
             <!-- 查詢會員證號表單頁面 -->
             <div v-if="checkMemberFrom">
-              <div class="text-base font-normal">
+              <div class="mb-3 text-base font-normal">
                 查詢個人會員證號請填寫下列資訊，查詢團體會員證號請透過02-27075885聯繫管理員
               </div>
               <form
@@ -269,10 +269,11 @@
 
         <!-- 忘記密碼 -->
         <div v-else-if="currentView === 'forgotPassword'">
-          <div class="my-auto">
-            <div class="mb-10">
-              <h1 class="mb-2 py-2 text-3xl font-bold">忘記密碼</h1>
-            </div>
+          <div class="my-auto grid">
+              <h1 class="py-2 text-3xl font-bold">忘記密碼</h1>
+              <div class="text-base font-normal my-4">
+                個人會員忘記密碼請填寫下列資訊，團體會員忘記密碼請透過02-27075885聯繫管理員
+              </div>
             <!-- 錯誤提示 -->
             <div v-if="emailErrormsg" class="alert">
               <Icon
@@ -299,7 +300,7 @@
                 />
                 <div class="flex-1">{{ rtnMsg }}</div>
               </div>
-              <form
+              <!-- <form
                 class="flex flex-col justify-center"
                 @submit.prevent="tokenVerfy"
               >
@@ -332,19 +333,13 @@
                 >
                   驗證
                 </button>
-              </form>
-              <!-- <div class="mb-10 text-base font-normal">
-                如未收到該電子郵件，請檢查您的垃圾郵件資料夾。該郵件是由<span
-                  class="font-bold"
-                  >ciee@ms35.hinet.net</span
-                >所寄出
-              </div>
+              </form> -->
               <button
-                class="px-auto mb-10 rounded-lg bg-gray-900 py-4 font-thin text-gray-100"
-                @click="changeView('login')"
-              >
-                返回會員登入
-              </button> -->
+                  @click="changeView('login')"
+                  class="mb-10 flex-1 rounded-lg bg-gray-900 px-auto py-4 font-thin text-gray-100"
+                >
+                  返回會員登入
+                </button>
             </div>
             <!-- 更新密碼 -->
             <div v-if="update" class="update-content">
@@ -462,9 +457,17 @@
             </div>
             <!-- 填寫電子郵件 -->
             <div v-if="!emailSent && !update && !emailErrormsg">
-              <div class="text-base font-normal">
+              <div v-if="rtnMsg" class="alert">
+              <Icon
+                name="mdi-close-circle-outline"
+                class="outlinkIcon mr-4 text-2xl"
+              />
+
+              <div class="flex-1">{{ rtnMsg }}</div>
+            </div>
+              <!-- <div class="mb-6 text-base font-normal">
                 個人會員忘記密碼請填寫下列資訊，團體會員忘記密碼請透過02-27075885聯繫管理員
-              </div>
+              </div> -->
 
               <form
                 class="flex flex-col justify-center"
@@ -531,7 +534,15 @@ const emit = defineEmits(['closeMenu'])
 
 const currentView = ref('login')
 const changeView = (view) => {
+  rtnMsg.value = ''; // 重置 rtnMsg
+  showErrorMsg.value = false;
+  showSuccessMsg.value = false;
   currentView.value = view // 切換到指定的視圖
+  // emailErrorMsg.value = false;
+  showSuccess.value = false;
+  emailSent.value = false;
+  checkMemberFrom.value = true;
+  
 }
 const overlayClass = ref('fullscreen-overlay')
 const account = ref('')
@@ -544,7 +555,7 @@ const loginResponse = ref(null)
 const errorResponse = ref(null)
 
 const changePsd = ref(false)
-const showErrormsg = ref(false)
+// const showErrormsg = ref(false)
 const emailErrormsg = ref(false)
 const emailSentErr = ref(false)
 const ErrrtnMsg = ref('')
@@ -590,7 +601,6 @@ onMounted(() => {
 
   try {
     const profile = userHelper.getUserProfile()
-    // console.log('初次加載時的 userProfile:', profile);
   } catch (error) {
     console.error('userHelper 尚未初始化:', error)
   }
@@ -608,8 +618,8 @@ const login = async () => {
   changePsd.value = false
   // 檢查表單是否有效
   if (!account.value.trim() || !password.value.trim()) {
-    alert('請填寫會員證號和密碼')
-    console.log('表單未填寫完整')
+    showErrorMsg.value = true
+    rtnMsg.value = '請填寫會員證號和密碼'
     return
   }
 
@@ -619,13 +629,11 @@ const login = async () => {
       { account: account.value, password: password.value },
       { headers }
     )
-    console.log('response:', response)
     if (!response.isSuccess === true) {
       //錯誤處理
       showErrorMsg.value = true
       rtnMsg.value = response.msg
     } else {
-      console.log(response)
       const userData = response.data.isAdmin
         ? response.data.data.backendUserId
         : response.data.data.frontUserData.front_user_id
@@ -645,7 +653,6 @@ const login = async () => {
 
       localStorage.setItem('user-profile', JSON.stringify(userProfile))
       localStorage.setItem('this-user', JSON.stringify(userData))
-      console.log('userData:', userData)
 
       const CIEEil = userLogin.getIsLogin()
       localStorage.setItem('cieeil', CIEEil)
@@ -658,17 +665,14 @@ const login = async () => {
       document.cookie = `isAdmin=${isAdmin}; path=/; max-age=3600; secure`
 
       const ProfileData = JSON.parse(localStorage.getItem('user-profile'))
-      console.log('ProfileData:', ProfileData)
       const hasChangedPassword = ProfileData ? ProfileData.passwordChange : null
-      console.log('hasChangedPassword:', hasChangedPassword)
 
       if (hasChangedPassword === true) {
-        // console.log('用戶需要更改密碼')
         changePsd.value = true
         // 等待用戶操作完成
         await waitForUserChoice()
       } else if (hasChangedPassword === false) {
-        console.log('用戶已經更改過密碼')
+        // console.log('用戶已經更改過密碼')
       } else {
         console.log('無法獲取密碼狀態')
       }
@@ -681,10 +685,16 @@ const login = async () => {
     console.log(error)
     if (error.response && error.response.status === 401) {
       console.log('帳號或密碼錯誤')
+      showErrorMsg.value = true
+      rtnMsg.value = '帳號或密碼錯誤'
     } else if (error.code === 'ECONNABORTED') {
       console.log('請求超時，請稍後再試')
+      showErrorMsg.value = true
+      rtnMsg.value = '請求超時，請稍後再試'
     } else {
       console.log('發生未知錯誤，請稍後再試')
+      showErrorMsg.value = true
+      rtnMsg.value = '發生未知錯誤，請稍後再試'
     }
   }
 }
@@ -713,42 +723,51 @@ const skipPasswordChange = () => {
   changePsd.value = false // 隱藏提示
 }
 
+const emailRule = [
+      (v) => !!v || '此欄位為必填',
+      (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || '電子郵件格式不正確'
+    ]
 const checkEmail = async () => {
   emailErrormsg.value = false
   emailSent.value = false
   update.value = false
   emailSentErr.value = false
-  if (!email.value.trim()) {
-    emailErrormsg.value = ture
-    rtnMsg.value = '請輸入有效的電子郵件地址'
-    return
+ 
+  // if (!email.value.trim()) {
+  //   emailErrormsg.value = true
+  //   rtnMsg.value = '請輸入有效的電子郵件地址'
+  //   console.log('請輸入有效的電子郵件地址')
+  //   return
+  // }
+  for (let rule of emailRule) {
+    const result = rule(email.value);
+    if (result !== true) {
+      // emailErrormsg.value = true;
+      rtnMsg.value = result; // 顯示錯誤訊息
+      return;
+    }
   }
 
   try {
     // 呼叫 testSrv.emailCheck 函數，將電子郵件傳遞過去
     const response = await testSrv.emailCheck(email.value)
-    console.log('Raw Response:', response)
     if (response.isSuccess) {
-      // alert('電子郵件有效');
-      console.log('電子郵件有效:', response)
       // 如果驗證通過發送帶有 token 的郵件 API
       emailInput.value = false
       emailSent.value = true
-      console.log('更新emailSent', emailSent.value)
       rtnMsg.value = response.data.rtnMsg
     } else {
       // alert('電子郵件無效或不存在');
       // emailErrormsg.value = ture
-      console.error('電子郵件檢查失敗:', response)
-      emailSentErr.value = true
-      rtnMsg.value = response.data.rtnMsg
+      // console.error('電子郵件檢查失敗1:', response)
+      // emailSentErr.value = true
+      rtnMsg.value = response.msg
     }
   } catch (error) {
-    emailErrormsg.value = ture
-    console.error('電子郵件檢查失敗:', error)
-    emailSentErr.value = true
-    rtnMsg.value = response.data.rtnMsg
-    // alert('檢查電子郵件時發生錯誤');
+    // emailErrormsg.value = true
+    // console.error('電子郵件檢查失敗2:', error)
+    // emailSentErr.value = true
+    rtnMsg.value = response.msg
   }
 }
 const tokenVerfy = async () => {
@@ -859,7 +878,7 @@ const updatePassword = async () => {
 }
 const checkMember = async () => {
   checkMemberFrom.value = true
-  showErrorMsg.value = false // 初始化錯誤顯示
+  showErrorMsg.value = false // 初始化錯誤顯示'
   showSuccessMsg.value = false // 初始化成功顯示
   rtnMsg.value = '' // 清空訊息
   if (
@@ -868,7 +887,8 @@ const checkMember = async () => {
     !email.value ||
     !email.value.trim()
   ) {
-    alert('請填寫會員姓名和電子信箱')
+    showErrorMsg.value = true
+    rtnMsg.value = '請填寫會員姓名和電子信箱'
     return
   }
 
@@ -876,13 +896,10 @@ const checkMember = async () => {
     chineseName: chineseName.value,
     email: email.value
   }
-  console.log('data:', data)
 
   try {
     const response = await testSrv.checkMemberEmail(data)
-    console.log('Raw Response:', response)
-    console.log('Response:', response.rtnCode)
-    console.log('Response:', response.rtnMsg)
+  
 
     if (response.rtnCode === '0000') {
       checkMemberFrom.value = false
@@ -939,7 +956,7 @@ const checkMember = async () => {
   align-items: center;
   display: flex;
   flex-direction: row;
-  margin-bottom: 16px;
+  margin: 0.75rem 0;
 }
 .sussess {
   background-color: rgba(111, 190, 159, 0.2);

@@ -37,18 +37,18 @@ const routes = [
     path: '/verify',
     component: () => import('~/pages/verify.vue')
   },
-  {
-    path: '/error',
-    component: () => import('~/pages/error.vue')
-  },
-  {
-    path: '/404',
-    component: () => import('~/pages/404.vue')
-  },
-  {
-    path: '/:pathMatch(.*)*', // 捕獲未匹配的路徑
-    redirect: '/404'
-  }
+  // {
+  //   path: '/error',
+  //   component: () => import('~/pages/error.vue')
+  // },
+  // {
+  //   path: '/404',
+  //   component: () => import('~/pages/[…slug].vue')
+  // },
+  // {
+  //   path: '/:pathMatch(.*)*', // 捕獲未匹配的路徑
+  //   redirect: '/404'
+  // }
   
   
 ];

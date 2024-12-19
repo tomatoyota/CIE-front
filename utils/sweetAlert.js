@@ -13,7 +13,7 @@ const swalWithCustomStyles = Swal.mixin({
   buttonsStyling: false, // 如果使用自訂樣式，這個需要設定成 false
   background: '#ffffff',
   // backdrop: `rgba(34, 34, 34, 0.6)`, // swal 後面那塊透明的黑底
-  width: '100%'
+  width: '40%'
 });
 
 export default swalWithCustomStyles;

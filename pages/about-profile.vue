@@ -174,14 +174,14 @@ onUnmounted(() => {
             </div>
           </template>
           <template v-if="item.data.type === 'unorderlist'">
-            <ul class="list-disc leading-7">
+            <ul class="list-disc leading-7 list-none">
               <li v-for="data in item.data.content">
                 {{ data }}
               </li>
             </ul>
           </template>
           <template v-if="item.data.type === 'orderlist'">
-            <ol class="list-decimal leading-7">
+            <ol class="list-decimal leading-7 list-none">
               <li v-for="data in item.data.content">
                 {{ data }}
               </li>

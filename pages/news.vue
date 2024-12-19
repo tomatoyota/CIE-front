@@ -18,6 +18,7 @@ export default {
       totalPages: null,
       loading: false,
       activeTab: null, 
+      maxLength: 160,
     }
   },
   created() {
@@ -44,8 +45,13 @@ export default {
     }
   },
   mounted() {
-    this.getAnnouncementList()
+    this.getAnnouncementList();
+    this.setMaxLength();
+    window.addEventListener('resize', this.setMaxLength);
   },
+    // beforeDestroy() {
+    //   window.removeEventListener('resize', this.setMaxLength);
+    // },
   watch: {
     '$route.query.currentPage'(newPage) {
     this.currentPage = parseInt(newPage, 10);
@@ -96,7 +102,6 @@ export default {
         sortDirection:"DESC",
       }
       const headers = headerHelper.setHeader
-      console.log('obj:', obj);
       newsSrv.getAnnouncementList(obj).then((res) => {
         this.loading = false
         const newsList = res.data.data
@@ -150,6 +155,22 @@ export default {
         this.currentPage = newPage
       }
     },
+    setMaxLength() {
+      const width = window.innerWidth;
+  if (width <= 768) {
+    this.maxLength = 30; // 手機版
+  } else if (width <= 960) {
+    this.maxLength = 60; // 平板版
+  } else {
+    this.maxLength = 120; // 桌面版
+  }
+    },
+    truncateText(text, maxLength) {
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...';
+      }
+      return text;
+    },
     // 格式化日期
 //     formatDate(dateStr) {
 //       const date = new Date(dateStr)
@@ -181,7 +202,7 @@ export default {
             <template v-for="(newsItem, index) in newsList" :key="newsItem.id">
               <tr @click="getNews(newsItem.announcementsId, index)"  class="tr">
                 <td class="td">{{ formatDate(newsItem.releaseAt) }}</td>
-                <td>{{ newsItem.title }}</td>
+                <td>{{ truncateText(newsItem.title, maxLength)}}</td>
               </tr>
             </template>
           </table>
@@ -212,6 +233,9 @@ export default {
   gap: 48px;
   border-bottom: 1px dashed;
   border-color: black;
+}
+.tr:hover {
+  background-color: #F3F3F3; /* 滑鼠懸停時的背景顏色 */
 }
 .td {
   width: 100px;

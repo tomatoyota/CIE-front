@@ -27,6 +27,7 @@
 import newsSrv from '@/service/news.js'
 import { announcementStore } from '@/stores/Announcement'
 import { storeToRefs } from 'pinia'
+import swalWithCustomStyles from '@/utils/sweetAlert'
 
 export default {
   components: {},
@@ -61,7 +62,6 @@ export default {
     this.totalPages = totalPages.value
 
     if (currentType) {
-      console.log(currentType)
       this.type = currentType
     }
     this.getnewsItem()
@@ -82,9 +82,7 @@ export default {
     // 假設要走最麻煩的上一頁
     this.originalIndex = currentIndex
     this.originalPage = this.currentPage
-    // 使用 currentIndex 和 newsId 做相關處理
-    console.log('Current Index:', currentIndex) // 這裡應該顯示正確的 index
-    console.log('News ID:', newsId)
+  
 
     // 假設你有一個 newsList，你可以透過 currentIndex 來顯示對應的新聞
 
@@ -153,7 +151,6 @@ export default {
             this.newsItem = res.data
             // this.getAnnouncementList()
             // console.log(this.newsItem)
-            console.log(this.newsItem.content)
           } else {
             console.error(
               '資料載入失敗, rtnCode:',
@@ -205,12 +202,10 @@ export default {
     toNext() {
       // 從路由的 query 參數中獲取當前的 currentIndex
       const currentIndex = parseInt(this.$route.query.currentIndex)
-      console.log('click!')
 
       // 檢查是否還有下一篇文章
       if (currentIndex < this.newsList.length - 1) {
         const nextIndex = currentIndex + 1
-        console.log('check')
 
         // 先進行路由跳轉
         this.$router.push({
@@ -220,7 +215,6 @@ export default {
             currentIndex: nextIndex
           }
         })
-        console.log('push')
 
         // 使用 setTimeout 延遲 500 毫秒後執行 getnewsItem
         setTimeout(() => {
@@ -228,14 +222,21 @@ export default {
         }, 100) // 500 毫秒延遲
       } else {
         // 在這裡處理上面拿到的 page 值
-        console.log('111')
         if (this.currentPage < this.totalPages) {
-          console.log('222')
           this.currentPage++
 
           this.getAnnouncementList('nextPage')
         } else {
-          alert('已經是最後一頁')
+          swalWithCustomStyles.fire({
+              toast: true,
+              position: 'center',
+              title: '已經是最後一頁',
+              confirmButtonColor: '#0E2A34',
+              confirmButtonText: '確認',
+              background: '#F0F0F2',
+              width: 400
+            })
+          // alert('已經是最後一頁')
         }
       }
     }
@@ -287,7 +288,9 @@ export default {
   word-wrap: break-word; /* 遇到單詞過長時換行 */
   word-break: break-word; /* 支援中英文內容自動斷行 */
   // list-style: inside;
+  padding: 0px 20px;
 }
+
 
 
 </style>

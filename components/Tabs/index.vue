@@ -12,7 +12,7 @@ provide('selectedTitle', selectedTitle)
 </script>
 <template>
   <div class="tabs flex-auto">
-    <ul class="flex gap-4 border-b border-[#6E6E6E]">
+    <ul class="flex gap-4 border-b border-[#6E6E6E] list-none">
       <li
         v-for="title in tabTitles"
         :key="title"

@@ -1,10 +1,10 @@
 <template>
   <div class="flex min-h-[50vh] items-start justify-center">
-    <form class="w-3/5 max-w-[1200px] my-8">
+    <form class="my-8 w-3/5 max-w-[1200px]">
       <!-- <h1 class="mb-4 text-2xl font-bold">修改團體會員</h1> -->
 
       <!-- Basic Info Section -->
-      <h3 class="mb-6 flex items-center text-lg font-bold text-style">
+      <h3 class="text-style mb-6 flex items-center text-lg font-bold">
         基本資料
       </h3>
 
@@ -12,7 +12,7 @@
         <!-- Chinese and English Names -->
         <div class="flex items-center gap-2">
           <div class="max-w-[500px] flex-1">
-            <label class="block font-bold mb-2">
+            <label class="mb-2 block font-bold">
               <span class="mr-1 text-red-500">*</span>團體中文名稱
             </label>
             <input
@@ -24,7 +24,7 @@
             />
           </div>
           <div class="max-w-[500px] flex-1">
-            <label class="block font-bold mb-2"> 團體英文名稱 </label>
+            <label class="mb-2 block font-bold"> 團體英文名稱 </label>
             <input
               type="text"
               v-model="ModifyCondition.englishName"
@@ -38,7 +38,7 @@
         <!-- Membership Level -->
         <div class="flex items-center gap-2">
           <div class="max-w-[500px] flex-1">
-            <label class="block font-bold mb-2">
+            <label class="mb-2 block font-bold">
               <span class="mr-1 text-red-500">*</span>會員級別
             </label>
             <select
@@ -63,7 +63,7 @@
         <!-- Branch -->
         <div class="flex items-center gap-2">
           <div class="max-w-[500px] flex-1">
-            <label class="block font-bold mb-2">
+            <label class="mb-2 block font-bold">
               <span class="mr-1 text-red-500">*</span>所屬分會
             </label>
             <select
@@ -88,7 +88,7 @@
         <!-- Dates -->
         <div class="flex items-center gap-2">
           <div class="max-w-[330px] flex-1">
-            <label class="block font-bold mb-2">
+            <label class="mb-2 block font-bold">
               <span class="mr-1 text-red-500">*</span>入會日期
             </label>
             <VueDatePicker
@@ -104,7 +104,7 @@
             </VueDatePicker>
           </div>
           <div class="max-w-[330px] flex-1">
-            <label class="block font-bold mb-2">
+            <label class="mb-2 block font-bold">
               <span class="mr-1 text-red-500">*</span>申請日期
             </label>
             <VueDatePicker
@@ -120,7 +120,7 @@
             </VueDatePicker>
           </div>
           <div class="max-w-[330px] flex-1">
-            <label class="block font-bold mb-2">
+            <label class="mb-2 block font-bold">
               <span class="mr-1 text-red-500">*</span>核准日期
             </label>
             <VueDatePicker
@@ -140,10 +140,17 @@
         <!-- Industry -->
         <div class="flex items-center gap-2">
           <div class="max-w-[500px] flex-1">
-            <label class="block font-bold mb-2">
+            <label class="mb-2 block font-bold">
               <span class="mr-1 text-red-500">*</span>行業別
             </label>
-            <select
+            <input
+              type="text"
+              v-model="ModifyCondition.industry"
+              placeholder="請輸入行業別"
+              class="w-full rounded border border-gray-300 p-2"
+              :disabled="Disabledindustry"
+            />
+            <!-- <select
               v-model="ModifyCondition.industry"
               placeholder="請選擇行業別"
               class="w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -155,7 +162,7 @@
               <option value="3">金融業</option>
               <option value="4">資訊業</option>
               <option value="5">其他</option>
-            </select>
+            </select> -->
           </div>
           <div class="max-w-[500px] flex-1"></div>
         </div>
@@ -165,12 +172,12 @@
 
   <div class="flex min-h-[40vh] items-start justify-center">
     <form class="w-[60%] max-w-[1200px]">
-      <h3 class="mb-6 flex items-center text-lg font-bold text-style">
+      <h3 class="text-style mb-6 flex items-center text-lg font-bold">
         聯絡資料
       </h3>
 
       <!-- 主要通訊地址 -->
-      <h5 class=" flex items-center text-base font-bold">
+      <h5 class="flex items-center text-base font-bold">
         <span class="mr-1 text-red-500">*</span>通訊地址
       </h5>
       <div class="flex items-center gap-2">
@@ -213,6 +220,7 @@
             v-model="ModifyCondition.mainAddressPostal"
             placeholder="請輸入郵遞區號"
             class="w-full rounded border border-gray-300 p-2"
+            readonly
           />
         </div>
       </div>
@@ -232,7 +240,7 @@
 
         <div class="flex items-center gap-2">
           <div class="max-w-[1025px] flex-1">
-            <label class="block font-bold mb-2">
+            <label class="mb-2 block font-bold">
               <span class="mr-1 text-red-500">*</span>聯絡電話
             </label>
             <input
@@ -246,7 +254,7 @@
 
         <div class="flex items-center gap-2">
           <div class="max-w-[1025px] flex-1">
-            <label class="block font-bold mb-2"> 傳真電話 </label>
+            <label class="mb-2 block font-bold"> 傳真電話 </label>
             <input
               type="text"
               v-model="ModifyCondition.fax"
@@ -354,7 +362,7 @@
         :key="index"
         class="py-6"
       >
-        <h3 class="m-0 flex items-center text-lg font-bold text-style">
+        <h3 class="text-style m-0 flex items-center text-lg font-bold">
           會員代表 {{ index + 1 }}
         </h3>
 
@@ -362,7 +370,7 @@
           <!-- 姓名 -- 職務 -->
           <div class="flex items-center gap-2">
             <div class="max-w-[500px] flex-1">
-              <label class="block font-bold mb-2"> 姓名 </label>
+              <label class="mb-2 block font-bold"> 姓名 </label>
               <input
                 type="text"
                 v-model="member.name"
@@ -372,7 +380,7 @@
             </div>
 
             <div class="max-w-[500px] flex-1">
-              <label class="block font-bold mb-2"> 職務 </label>
+              <label class="mb-2 block font-bold"> 職務 </label>
               <input
                 type="text"
                 v-model="member.position"
@@ -385,7 +393,7 @@
           <!-- 電話 -->
           <div class="flex items-center gap-2">
             <div class="max-w-[1025px] flex-1">
-              <label class="block font-bold mb-2"> 電話 </label>
+              <label class="mb-2 block font-bold"> 電話 </label>
               <input
                 type="text"
                 v-model="member.phone"
@@ -398,7 +406,7 @@
           <!-- 電子郵件信箱 -->
           <div class="flex items-center gap-2">
             <div class="max-w-[1025px] flex-1">
-              <label class="block font-bold mb-2"> 電子郵件信箱 </label>
+              <label class="mb-2 block font-bold"> 電子郵件信箱 </label>
               <input
                 type="email"
                 v-model="member.email"
@@ -438,7 +446,7 @@
         <div class="flex justify-end gap-2 py-4">
           <NuxtLink
             to="/"
-            class="inline-block cursor-pointer rounded  px-5 py-2 text-center border border-gray-950"
+            class="inline-block cursor-pointer rounded border border-gray-950 px-5 py-2 text-center"
           >
             取消
           </NuxtLink>
@@ -446,7 +454,7 @@
             @click="putMember"
             class="cursor-pointer rounded bg-indigo-800 px-5 py-2 text-white"
           >
-            發布
+            儲存
           </button>
         </div>
       </div>
@@ -462,10 +470,9 @@ import swalWithCustomStyles from '@/utils/sweetAlert'
 import dropSrv from '@/service/dropdown.js'
 import Item from '~/components/Tabs/item.vue'
 
-import { useRoute } from 'vue-router'
 import memberServ from '@/service/memberEditFront.js'
 import { LoginStore } from '@/stores/LoginStore'
-import userHelper from '@/utils/helpers/user.js'
+import { useRoute , useRouter } from 'vue-router'
 
 export default {
   components: {
@@ -487,11 +494,11 @@ export default {
 
         representatives: [
           {
-            name: "",
-            position: "",
-            phone: "",
-            email: "",
-          },
+            name: '',
+            position: '',
+            phone: '',
+            email: ''
+          }
         ],
 
         locationId: this.selectedCounty || this.selectedCity,
@@ -524,8 +531,7 @@ export default {
         sortBy: 'createdAt',
         sortDirection: 'DESC',
         currentPage: 1,
-        pageSize: 10,
-
+        pageSize: 10
       },
       formData: {
         chineseName: '',
@@ -535,7 +541,7 @@ export default {
         entryDate: '',
         applicationDate: '',
         approvalDate: '',
-        industry: null,
+        industry: '',
         mainAddressCity: null,
         mainAddressDistrict: null,
         mainAddressPostal: '',
@@ -613,13 +619,12 @@ export default {
       Disabledindustry: false,
 
       DisabledlocationCounty: false,
-
-
+      hasFetchedPersonalMember: false
     }
   },
   created() {
-    this.checkAccessPermission();
-    this.getLocationList();
+    this.checkAccessPermission()
+    this.getLocationList()
     this.fetchLocalStorageData()
   },
   watch: {
@@ -641,32 +646,70 @@ export default {
       },
       deep: true
     },
+    
     'ModifyCondition.mainAddressCity': {
       handler(val) {
-        this.ModifyCondition.mainAddressCity = val;
-        if(this.countyList){
-          const matchCity = this.LocationList.find((city) => city.locationId === val);
-          this.countyList = matchCity.children;
+        this.ModifyCondition.mainAddressCity = val
+
+        if (this.LocationList) {
+          const matchCity = this.LocationList.find(
+            (city) => city.locationId === val
+          )
+          this.countyList = matchCity ? matchCity.children || [] : []
         }
-        if(this.previousCity != val){
-          this.ModifyCondition.mainAddressDistrict = "";
+
+        if (this.previousCity !== val) {
+          this.ModifyCondition.mainAddressDistrict = ''
         }
-        //console.log(this.ModifyCondition.mainAddressDistrict);
       },
       deep: true
     },
-
+    'ModifyCondition.mainAddressDistrict': {
+      handler(val) {
+        // 當選中主要地址的區域時，更新對應的郵遞區號
+        const selectedDistrict = this.countyList.find(
+          (district) => district.locationId === val
+        )
+        if (selectedDistrict) {
+          this.ModifyCondition.mainAddressPostal = selectedDistrict.postalCode
+        } else {
+          this.ModifyCondition.mainAddressPostal = ''
+        }
+      },
+      deep: true
+    }
   },
   mounted() {
-    this.fetchInitialData();
-    this.getGroupMember();
-    this.getGroupLevelList();
-    this.getBranchList();
+    this.fetchInitialData()
+    if (!this.hasFetchedPersonalMember) {
+      this.getGroupMember()
+      this.hasFetchedPersonalMember = true // 標記為已執行
+    }
+    // this.getGroupMember()
+    this.getGroupLevelList()
+    this.getBranchList()
+    //   if (Array.isArray(this.LocationList) && this.LocationList.length > 0) {
+    //   this.initializeMainAddress();
+    // }
+    this.$nextTick(() => {
+      if (Array.isArray(this.LocationList) && this.LocationList.length > 0) {
+        this.initializeMainAddress()
+      }
+    })
+    const hasChecked = sessionStorage.getItem('hasCheckedReload')
+    if (!hasChecked) {
+      this.checkAndReload()
+      sessionStorage.setItem('hasCheckedReload', 'true')
+    }
   },
   computed: {
     showMaxLimitMessage() {
-      return this.ModifyCondition.representatives && this.ModifyCondition.representatives.length >= 4;
-    },},
+      return (
+        this.ModifyCondition.representatives &&
+        this.ModifyCondition.representatives.length >= 4
+      )
+    }
+  },
   methods: {
     fetchLocalStorageData() {
       let data = {}
@@ -680,7 +723,7 @@ export default {
         data[key] = value // Add key-value pair to the `data` object
       }
       this.storageData = data // Update the Vue data property
-      console.log('localStorage data:', this.storageData)
+      // console.log('localStorage data:', this.storageData)
     },
     async getGroupMember() {
       const loginStore = LoginStore()
@@ -688,7 +731,7 @@ export default {
       //console.log(userId)
       if (userId !== null) {
         memberServ.editGroupProfile(userId).then((res) => {
-          console.log('response:', res.data.data.Organizations);
+          // console.log('response:', res.data.data.Organizations)
         })
         // this.$router.push('/groupProfile');
       } else {
@@ -698,78 +741,199 @@ export default {
       }
     },
     async fetchInitialData() {
-      this.loading=true;
+      this.loading = true
       try {
-        const res = await memberServ.editGroupProfile(this.userId);
+        const res = await memberServ.editGroupProfile(this.userId)
         if (res.isSuccess && res.data.data.Organizations.length > 0) {
-          const org = res.data.data.Organizations[0];
+          const org = res.data.data.Organizations[0]
           // console.log('org',org);
           // console.log('會員代表',org.RepresentativeMembers);
+          // await this.ensureLocationListReady()
+          // this.initializeMainAddress()
 
-          this.ModifyCondition.chineseName = org.chineseName;
-          this.DisabledchineseName = true;
-          this.ModifyCondition.englishName = org.englishName;
-          this.DisabledenglishName = true;
-          this.ModifyCondition.level = org.level;
-          this.Disabledlevel = true;
-          this.ModifyCondition.branch = org.branch;
-          this.Disabledbranch = true;
-          this.ModifyCondition.entryDate = org.entryDate;
-          this.DisabledentryDate = true;
-          this.ModifyCondition.applicationDate = org.applicationDate;
-          this.DisabledapplicationDate = true;
-          this.ModifyCondition.approvalDate = org.approvalDate;
-          this.DisabledapprovalDate = true;
-          var industryId = null;
-              switch (org.industry) {
-                case '製造業':
-                  industryId = 1;
-                  break;
-                case '服務業':
-                  industryId = 2;
-                  break;
-                case '金融業':
-                  industryId = 3;
-                  break;
-                case '資訊業':
-                  industryId = 4;
-                  break;
-                case '其他':
-                  industryId = 5;
-                  break;
+          this.ModifyCondition.chineseName = org.chineseName
+          this.DisabledchineseName = true
+          this.ModifyCondition.englishName = org.englishName
+          this.DisabledenglishName = true
+          this.ModifyCondition.level = org.level
+          this.Disabledlevel = true
+          this.ModifyCondition.branch = org.branch
+          this.Disabledbranch = true
+          this.ModifyCondition.entryDate = org.entryDate
+          this.DisabledentryDate = true
+          this.ModifyCondition.applicationDate = org.applicationDate
+          this.DisabledapplicationDate = true
+          this.ModifyCondition.approvalDate = org.approvalDate
+          this.DisabledapprovalDate = true
+          var industryId = null
+          switch (org.industry) {
+            case '製造業':
+              industryId = 1
+              break
+            case '服務業':
+              industryId = 2
+              break
+            case '金融業':
+              industryId = 3
+              break
+            case '資訊業':
+              industryId = 4
+              break
+            case '其他':
+              industryId = 5
+              break
+          }
+          // this.ModifyCondition.industry = industryId;
+          this.ModifyCondition.industry = org.industry
+          this.Disabledindustry = true
+          // console.log('org.mainAddressCity', org.mainAddressCity)
+          // console.log('org.mainAddressDistrict', org.mainAddressDistrict)
+          // console.log('org.mainAddressPostal', org.mainAddressPostal)
+          // 處理主要地址
+          var mainAddressCity = org.mainAddressCity
+          var mainAddressDistrict = org.mainAddressDistrict
+          var mainAddressPostal = org.mainAddressPostal
+          var mainAddressDetail = org.mainAddressDetail
+          this.ModifyCondition.mainAddressCity = mainAddressCity
+          this.previousCity = mainAddressCity
+      
+
+          // await this.initializeMainAddress()
+
+          await this.getLocationList()
+
+          this.$nextTick(
+            function () {
+              // console.log('Location List:', this.LocationList)
+              
+              var matchCity = (this.LocationList || []).find(
+                function (city) {
+                  return (
+                    city.locationId === this.ModifyCondition.mainAddressCity
+                  )
+                }.bind(this)
+              )
+
+              if (matchCity) {
+
+                this.countyList = matchCity.children || []
+
+                var districtExists = (this.countyList || []).some(function (
+                  district
+                ) {
+                  return (
+                    String(district.locationId) === String(mainAddressDistrict)
+                  )
+                })
+
+                if (districtExists) {
+                  this.ModifyCondition.mainAddressDistrict = mainAddressDistrict
+
+                  var selectedDistrict = (this.countyList || []).find(
+                    function (district) {
+                      return (
+                        String(district.locationId) ===
+                        String(this.ModifyCondition.mainAddressDistrict)
+                      )
+                    }.bind(this)
+                  )
+
+                  if (selectedDistrict) {
+                    this.ModifyCondition.mainAddressPostal =
+                      selectedDistrict.postalCode || ''
+                  } else {
+                    console.error(
+                      'Main Address District not found in County List!'
+                    )
+                  }
+                } else {
+                  console.error(
+                    'Main Address District does not exist in County List!'
+                  )
+                }
+              } else {
+                console.error('Main Address City not found in Location List!')
               }
-          this.ModifyCondition.industry = industryId;
-          this.Disabledindustry = true;
+            }.bind(this)
+          )
 
-          this.ModifyCondition.mainAddressCity = org.mainAddressCity;
-          this.previousCity = org.mainAddressCity;
+          this.ModifyCondition.mainAddressDetail = mainAddressDetail
 
-          this.ModifyCondition.mainAddressDistrict = org.mainAddressDistrict;
+          this.ModifyCondition.mainPhone = org.mainPhone
+          this.ModifyCondition.fax = org.fax
 
-          this.ModifyCondition.mainAddressPostal = org.mainAddressPostal;
-          this.ModifyCondition.mainAddressDetail = org.mainAddressDetail;
-          this.ModifyCondition.mainPhone = org.mainPhone;
-          this.ModifyCondition.fax = org.fax;
+          this.ModifyCondition.responsiblePersonName = org.responsiblePersonName
+          this.ModifyCondition.responsiblePersonPosition =
+            org.responsiblePersonPosition
+          this.ModifyCondition.responsiblePersonPhone =
+            org.responsiblePersonPhone
+          this.ModifyCondition.responsiblePersonEmail =
+            org.responsiblePersonEmail
 
-          this.ModifyCondition.responsiblePersonName = org.responsiblePersonName;
-          this.ModifyCondition.responsiblePersonPosition = org.responsiblePersonPosition;
-          this.ModifyCondition.responsiblePersonPhone = org.responsiblePersonPhone;
-          this.ModifyCondition.responsiblePersonEmail = org.responsiblePersonEmail;
+          this.ModifyCondition.contactName = org.contactName
+          this.ModifyCondition.contactPosition = org.contactPosition
+          this.ModifyCondition.contactPhone = org.contactPhone
+          this.ModifyCondition.contactEmail = org.contactEmail
 
-          this.ModifyCondition.contactName = org.contactName;
-          this.ModifyCondition.contactPosition = org.contactPosition;
-          this.ModifyCondition.contactPhone = org.contactPhone;
-          this.ModifyCondition.contactEmail = org.contactEmail;
-
-          this.ModifyCondition.representatives = org.RepresentativeMembers;
+          this.ModifyCondition.representatives = org.RepresentativeMembers
           //console.log(res.data.data);
         }
       } catch (error) {
-        console.error('初始化資料失敗：', error);
-      }finally{
-        this.loading=false;
+        console.error('初始化資料失敗：', error)
+      } finally {
+        this.loading = false
       }
     },
+   
+    async getLocationList() {
+      try {
+        const res = await dropSrv.getLocationList()
+        if (res.isSuccess) {
+          this.LocationList = res.data.data
+
+          // 返回 Promise 以供調用方等待資料加載完成
+          return Promise.resolve(this.LocationList)
+        } else {
+          return Promise.reject('Failed to load LocationList')
+        }
+      } catch (error) {
+        console.error('Error loading LocationList:', error)
+        swalWithCustomStyles.fire({
+          toast: false,
+          position: 'center',
+          title: '無法載入地區清單，請稍後重試。',
+          confirmButtonColor: '#4CAF50',
+          confirmButtonText: '確認',
+          width: 500
+        })
+        return Promise.reject(error)
+      }
+    },
+
+    initializeMainAddress() {
+      if (!Array.isArray(this.LocationList) || this.LocationList.length === 0) {
+        console.error('Location List not loaded!')
+        return
+      }
+
+      const matchCity = this.LocationList.find(
+        (city) => city.locationId === this.ModifyCondition.mainAddressCity
+      )
+
+      if (matchCity) {
+        this.countyList = matchCity.children || []
+        const selectedDistrict = this.countyList.find(
+          (district) =>
+            district.locationId === this.ModifyCondition.mainAddressDistrict
+        )
+        this.ModifyCondition.mainAddressPostal = selectedDistrict
+          ? selectedDistrict.postalCode
+          : ''
+      } else {
+        console.error('Main Address City not found in Location List!')
+      }
+    },
+
     getGroupLevelList() {
       dropSrv
         .getGroupLevelList()
@@ -796,54 +960,78 @@ export default {
           console.error('Error:', error)
         })
     },
-    getLocationList() {
-      dropSrv
-        .getLocationList()
-        .then((res) => {
-          if (res.isSuccess) {
-            this.LocationList = res.data.data
-          }
-        })
-        .catch((error) => {
-          console.error('Error:', error)
-        })
-    },
+    // getLocationList() {
+    //   dropSrv
+    //     .getLocationList()
+    //     .then((res) => {
+    //       if (res.isSuccess) {
+    //         // this.LocationList = res.data.data
+    //         this.LocationList = res.data.data || []
+    //         if (this.LocationList.length > 0) {
+    //           this.initializeMainAddress()
+    //         }
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.error('Error:', error)
+    //       this.LocationList = []
+    //     })
+    // },
+    async getLocationList() {
+  try {
+    const res = await dropSrv.getLocationList();
+    if (res.isSuccess) {
+      this.LocationList = res.data.data;
+
+      // 返回 Promise 以供調用方等待資料加載完成
+      return Promise.resolve(this.LocationList);
+    } else {
+      return Promise.reject('Failed to load LocationList');
+    }
+  } catch (error) {
+    console.error('Error loading LocationList:', error);
+    swalWithCustomStyles
+            .fire({
+              toast: false,
+              position: 'center',
+              title: '無法載入地區清單，請稍後重試。',
+              confirmButtonColor: '#4CAF50',
+              confirmButtonText: '確認',
+              width: 500
+            });
+    return Promise.reject(error);
+  }
+},
     addMember() {
       if (this.ModifyCondition.representatives.length < 4) {
         this.ModifyCondition.representatives.push({
-          name: "",
-          position: "",
-          phone: "",
-          email: "",
-        });
+          name: '',
+          position: '',
+          phone: '',
+          email: ''
+        })
       }
     },
-    putMember() {
-      
+    async putMember() {
       if (!Array.isArray(this.ModifyCondition.representatives)) {
-      this.ModifyCondition.representatives = [];
-    }
+        this.ModifyCondition.representatives = []
+      }
 
-    // 過濾代表資料
-    const filteredRepresentatives = this.ModifyCondition.representatives.filter((rep) => {
-      const hasRequiredFields = rep.name || rep.position || rep.phone || rep.email;
-      const isCompleteForEdit = rep.memberId || hasRequiredFields;
+      // 過濾代表資料
+      const filteredRepresentatives =
+        this.ModifyCondition.representatives.filter((rep) => {
+          const hasRequiredFields =
+            rep.name || rep.position || rep.phone || rep.email
+          const isCompleteForEdit = rep.memberId || hasRequiredFields
 
-      // 若代表的四個主要屬性中至少有一個不為空，則保留
-      return isCompleteForEdit && hasRequiredFields;
-    });
-
-    console.log('filteredRepresentatives', filteredRepresentatives);
-
-    // 如果過濾後的代表列表為空，則刪除該屬性
-    if (filteredRepresentatives.length === 0) {
-      delete this.ModifyCondition.representatives;
-    } else {
-      this.ModifyCondition.representatives = filteredRepresentatives;
-    }
+          // 若代表的四個主要屬性中至少有一個不為空，則保留
+          return isCompleteForEdit && hasRequiredFields
+        })
 
       const frontUserId = localStorage.getItem('this-user')
-      const cleanUserId = JSON.parse(frontUserId) 
+      const cleanUserId = JSON.parse(frontUserId)
+      const router = useRouter()
+
       const obj = {
         frontUserId: cleanUserId,
         chineseName: this.ModifyCondition.chineseName,
@@ -861,59 +1049,71 @@ export default {
         mainPhone: this.ModifyCondition.mainPhone,
         fax: this.ModifyCondition.fax,
         responsiblePersonName: this.ModifyCondition.responsiblePersonName,
-        responsiblePersonPosition: this.ModifyCondition.responsiblePersonPosition,
+        responsiblePersonPosition:
+          this.ModifyCondition.responsiblePersonPosition,
         responsiblePersonPhone: this.ModifyCondition.responsiblePersonPhone,
         responsiblePersonEmail: this.ModifyCondition.responsiblePersonEmail,
         contactName: this.ModifyCondition.contactName,
         contactPosition: this.ModifyCondition.contactPosition,
         contactPhone: this.ModifyCondition.contactPhone,
-        // representatives: this.ModifyCondition.representatives,
-        ...(filteredRepresentatives.length > 0 ? { representatives: filteredRepresentatives } : {})
-      };
-      console.log('obj',obj);
-      memberServ.putGroupMember(obj).then((res) => {
-        if (!res.isSuccess) {
-          swalWithCustomStyles.fire({
-            toast: true,
-            position: 'center',
-            title: `${res.msg}`,
-            confirmButtonColor: '#4CAF50',
-            confirmButtonText: '確認',
-            width: 500
-          });
-          // console.log(res.data.rtnMsg);
-        } else {
-          swalWithCustomStyles.fire({
-            toast: true,
-            position: 'center',
-            title: `${res.data.rtnMsg}`,
-            confirmButtonColor: '#4CAF50',
-            confirmButtonText: '確認',
-            width: 500
-          }).then((result) => {
-            if (result.isConfirmed) {
-              //this.$router.push('/admin/dataEdit');
-            }
-          });
-          // console.log(res.data.rtnMsg);
-        }
-          
-        
-      });
-      this.$router.push('/');
-    },
-    checkAccessPermission(){
-      try {
-      const userProfile = userHelper.getUserProfile();
-      // 判斷使用者的 accountType 是否為 個人會員
-      if (userProfile.accountType !== 2) {
-        // 如果條件不符，跳轉至首頁
-        this.$router.push('/');
+        ...(filteredRepresentatives.length > 0
+          ? { representatives: filteredRepresentatives }
+          : {})
       }
-    } catch (error) {
-      console.error('無法檢查使用者權限：', error);
-      this.$router.push('/');
-    }
+
+      try {
+        const res = await memberServ.putGroupMember(obj)
+        console.log('putGroupMember res:', res)
+        console.log('putGroupMember data:', res.data)
+
+        const title = res.isSuccess
+          ? res.data.rtnMsg || '更新成功'
+          : res.msg || '更新失敗'
+
+        await swalWithCustomStyles.fire({
+          toast: false,
+          position: 'center',
+          title: title,
+          // confirmButtonColor: '#4CAF50',
+          confirmButtonText: '確認',
+          width: 500
+        })
+
+        if (res.isSuccess) {
+          console.log('put成功:', res.data)
+          router.push('/')
+        } else {
+          console.error('put失敗:', res)
+        }
+      } catch (error) {
+        console.error('更新資料時發生錯誤:', error)
+
+        await swalWithCustomStyles.fire({
+          toast: false,
+          position: 'center',
+          title: '更新資料時發生錯誤',
+          confirmButtonColor: '#4CAF50',
+          confirmButtonText: '確認',
+          width: 500
+        })
+        router.push('/')
+      }
+    },
+
+
+    checkAccessPermission() {
+      const router = useRouter()
+      try {
+        const userProfile = userHelper.getUserProfile()
+        // 判斷使用者的 accountType 是否為 個人會員
+        if (userProfile.accountType !== 2) {
+          // 如果條件不符，跳轉至首頁
+          router.push('/')
+        }
+      } catch (error) {
+        console.error('無法檢查使用者權限：', error)
+        router.push('/')
+      }
     }
   }
 }

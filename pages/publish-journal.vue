@@ -122,10 +122,10 @@ const getAcademics = async (id) => {
     const res = await academicsSrv.getAcademics(id);
     if (res.isSuccess) {
       academicsData.value = res.data
-      console.log('取得的學刊:', academicsData.value)
+      // console.log('取得的學刊:', academicsData.value)
       Title.value = res.data.title;
       Image.value = res.data.image[0];
-      console.log("取得的學刊:", Title.value, Image.value.realFileName);
+      // console.log("取得的學刊:", Title.value, Image.value.realFileName);
     } else {
       console.error("API 錯誤:", res.msg);
     }

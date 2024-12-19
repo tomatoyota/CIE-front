@@ -50,10 +50,11 @@
 </template>
 
 <script>
-// import { useError } from '#imports';
+// defineProps({
+//   error: Object
+// })
 
-// const error = useError();
-const error = useError(); 
+// const handleError = () => clearError({ redirect: '/' })
 </script>
 
 <style></style>

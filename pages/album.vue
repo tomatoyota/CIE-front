@@ -2,7 +2,7 @@
 import newsSrv from '@/service/news.js'
 import PaginationComponent from '@/components/PaginationComponent.vue'
 import headerHelper from '@/utils/helpers/header.js'
-import {albumStore} from '@/stores/Album'
+import { albumStore } from '@/stores/Album'
 
 export default {
   components: { PaginationComponent },
@@ -19,6 +19,7 @@ export default {
       totalPages: null,
       loading: false,
       activeTab: 1, // 用於追蹤選中的 tab，初始值為 1（最新消息）
+      maxLength: 160
     }
   },
   // created:{
@@ -33,16 +34,18 @@ export default {
     }
   },
   mounted() {
-    this.getAnnouncementList();
+    this.getAnnouncementList()
+    this.setMaxLength()
+    window.addEventListener('resize', this.setMaxLength)
   },
   watch: {
     page(n) {
       this.getAnnouncementList()
     },
     activeTab(newVal) {
-    this.page = 1;
-    this.getAnnouncementList();
-  }
+      this.page = 1
+      this.getAnnouncementList()
+    }
   },
   methods: {
     async getAnnouncementList() {
@@ -62,18 +65,18 @@ export default {
       const tmrDate = `${tmrYyyy}-${tmrMm}-${tmrDd}`
 
       const obj = {
-        title: "",
-        publishStartDate: "",
+        title: '',
+        publishStartDate: '',
         publishEndDate: todayDate,
         type: 4,
-        createdStartAt: "",
-        createdEndAt: "",
+        createdStartAt: '',
+        createdEndAt: '',
         expiredStartDate: tmrDate,
-        expiredEndDate: "",
+        expiredEndDate: '',
         currentPage: this.currentPage,
         pageSize: 10,
-        sortBy:"release_at", //"announcements_id","release_date","expired_date","created_at","updated_at",created_by,"updated_by"
-        sortDirection:"DESC",
+        sortBy: 'release_at', //"announcements_id","release_date","expired_date","created_at","updated_at",created_by,"updated_by"
+        sortDirection: 'DESC'
       }
       const headers = headerHelper.setHeader
 
@@ -81,11 +84,8 @@ export default {
         this.loading = false
         const newsList = res.data.data
         this.newsList = newsList
-        console.log('News List:', this.newsList);
         this.currentPage = res.data.pagination.currentPage
-        console.log('第',this.currentPage,'頁')
         this.totalPages = res.data.pagination.totalPages
-        console.log('共',this.totalPages,'頁')
 
         const store = albumStore()
         const currentPage = this.currentPage
@@ -93,15 +93,13 @@ export default {
       })
     },
     getNews(id, index) {
-      const selectedNews = this.newsList[index];
-      const albumUrl = selectedNews.albumUrl;
+      const selectedNews = this.newsList[index]
+      const albumUrl = selectedNews.albumUrl
       if (albumUrl) {
-      window.open(albumUrl, '_blank'); // 使用新標籤頁打開
-    } else {
-      console.warn('No album URL found for this item.');
-    }
-
-
+        window.open(albumUrl, '_blank') // 使用新標籤頁打開
+      } else {
+        console.warn('No album URL found for this item.')
+      }
     },
 
     formatDate(dateStr) {
@@ -126,44 +124,23 @@ export default {
         this.currentPage = newPage
       }
     },
-    // async fetchAlbum() {
-    //   try {
-    //     const response = await newsSrv.getAnnouncementList({
-    //       page: this.page,
-    //       sortBy: 'release_at',
-    //       sortDirection: 'DESC',
-    //       type: 4,
-    //     })
-
-    //     const formattedData = await Promise.all(
-    //       response.data.data.map(async (item) => {
-    //         if (item && item.announcementsId) {
-    //           const albumId = this.extractAlbumId(item.albumUrl)
-    //           const path = albumId ? await newsSrv.getFlickrAlbumCover(albumId) : this.defaultpic
-
-    //           return {
-    //             announcementsId: item.announcementsId,
-    //             date: new Date(item.releaseAt).toLocaleDateString('zh-TW').replace(/\//g, '.'),
-    //             title: item.title,
-    //             albumUrl: item.albumUrl,
-    //             path,
-    //           }
-    //         } else {
-    //           console.warn('Album Item is undefined or does not have announcementsId:', item)
-    //           return null
-    //         }
-    //       })
-    //     )
-
-    //     this.albumDatas = formattedData.filter((item) => item !== null)
-    //   } catch (error) {
-    //     console.error('Error fetching album data:', error)
-    //   }
-    // },
-    // extractAlbumId(albumUrl) {
-    //   // 提取相冊 ID 的方法，例如從 URL 中截取所需的部分
-    //   return albumUrl ? albumUrl.split('/').pop() : null
-    // },
+    setMaxLength() {
+      const width = window.innerWidth
+      if (width <= 768) {
+        this.maxLength = 30 // 手機版
+      } else if (width <= 960) {
+        this.maxLength = 60 // 平板版
+      } else {
+        this.maxLength = 120 // 桌面版
+      }
+    },
+    truncateText(text, maxLength) {
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength) + '...'
+      }
+      return text
+    }
+    
   }
 }
 
@@ -172,31 +149,27 @@ export default {
 <template>
   <PageHeader />
   <section class="section-wrapper">
-        <section class="mb-20">
-          <table class="table">
-            <template v-for="(newsItem, index) in newsList" :key="newsItem.id" >
-              <!-- <NuxtLink :to="newsitem.albumUrl"> -->
-              <tr @click="getNews(newsItem.announcementsId, index)"  class="tr">
-                <td class="td">{{ formatDate(newsItem.releaseAt) }}</td>
-                <td>{{ newsItem.title }}</td>
-              </tr>
-            <!-- </NuxtLink> -->
-            </template>
-          </table>
-        </section>
+    <section class="mb-20">
+      <table class="table">
+        <template v-for="(newsItem, index) in newsList" :key="newsItem.id">
+          <!-- <NuxtLink :to="newsitem.albumUrl"> -->
+          <tr @click="getNews(newsItem.announcementsId, index)" class="tr">
+            <td class="td">{{ formatDate(newsItem.releaseAt) }}</td>
+            <td>{{ truncateText(newsItem.title, maxLength) }}</td>
+          </tr>
+          <!-- </NuxtLink> -->
+        </template>
+      </table>
+    </section>
 
+    <PaginationComponent
+      :pageLength="totalPages"
+      :currentPage="currentPage"
+      @setPage="changePage"
+      @getList="getAnnouncementList"
+    />
 
-        <PaginationComponent
-            :pageLength="totalPages"
-            :currentPage="currentPage"
-            @setPage="changePage"
-            @getList="getAnnouncementList"
-          />
-
-
-        <!-- <p class="mb-0 mr-2" v-if="paginations.totalCount">
-            共{{ paginations.totalCount }}筆
-          </p> -->
+  
   </section>
 </template>
 <style lang="scss" scoped>
@@ -210,6 +183,9 @@ export default {
   gap: 48px;
   border-bottom: 1px dashed;
   border-color: black;
+}
+.tr:hover {
+  background-color: #f3f3f3; /* 滑鼠懸停時的背景顏色 */
 }
 .td {
   width: 100px;
@@ -234,9 +210,9 @@ export default {
   cursor: not-allowed;
 }
 .tab-button {
-  border-top: 1px solid #6E6E6E;
-  border-left: 1px solid #6E6E6E;
-  border-right: 1px solid #6E6E6E;
+  border-top: 1px solid #6e6e6e;
+  border-left: 1px solid #6e6e6e;
+  border-right: 1px solid #6e6e6e;
   border-radius: 0.375rem 0.375rem 0 0; /* 上方圓角 */
   padding: 0.75rem 1.5rem;
   background-color: white;

@@ -82,7 +82,7 @@ onBeforeUnmount(() => {
   <!-- class="navbar mx-auto" -->
 
   <nav class="" v-if="!isClickMode">
-    <ul class="flex md:justify-center xl:justify-end">
+    <ul class="flex list-none md:justify-center xl:justify-end">
       <li
         v-for="item in globalStore.menuitems"
         class="menuItem relative"
@@ -104,7 +104,7 @@ onBeforeUnmount(() => {
         </NuxtLink>
         <ul
           v-if="item?.children"
-          class="submenuItem absolute left-1/2 hidden -translate-x-1/2 transform border-t-2 border-logoColor bg-white py-3"
+          class="submenuItem absolute left-1/2 hidden -translate-x-1/2 transform border-t-2 border-logoColor bg-white py-3 list-none"
         >
           <li
             v-for="subItem in item.children"
@@ -138,7 +138,7 @@ onBeforeUnmount(() => {
   <!-- 1200px 以下 -->
   <nav v-else>
     <div class="scroll-container" ref="menuScrollRef">
-      <ul class="flex flex-nowrap">
+      <ul class="flex list-none flex-nowrap">
         <li
           v-for="(item, index) in globalStore.menuitems"
           class="menuItem flex-shrink-0 flex-grow-0 basis-auto first:ml-auto last:mr-auto"
@@ -183,7 +183,7 @@ onBeforeUnmount(() => {
     ></div>
     <ul
       v-show="['contact', 'apply'].indexOf(activeItem) < 0 && !!activeItem"
-      class="mobileSubMenu flex flex-col justify-between py-2"
+      class="mobileSubMenu flex flex-col justify-between py-2 list-none"
       ref="subMenuRef"
       @click="handleMenuClickOutside"
     >

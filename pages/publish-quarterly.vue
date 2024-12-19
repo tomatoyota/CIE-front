@@ -63,21 +63,13 @@ const getYear = async () => {
           label: `${year}年`
         }))
       )
-      // console.log("getAssociationYears資料:", res);
-      // console.log("validYears資料:", validYears);
-      // console.log("yearsItems資料:", yearsItems);
-
-      // activeYear.value = yearsItems[0]?.key || null; // 預設第一個年份
-      // if (yearsItems.length > 0 && !activeYear.value) {
-      //   activeYear.value = yearsItems[0].key;
-      // }
+  
       // 如果有資料，設置年分預設值
       if (yearsItems.length > 0) {
         activeYear.value = yearsItems[0].key;
         await getSeasonsByYear(activeYear.value);
       }
 
-      // console.log("activeYear資料:", activeYear.value);
     } else {
       console.error('取得年份資料失敗，資料格式不正確:', res)
     }
@@ -101,10 +93,8 @@ const getSeasonsByYear = async (year) => {
   }
   try {
     const res = await associationsSrv.getSeasonsByYear(obj)
-    // console.log('getSeasonsByYear資料:', res)
     if (res.isSuccess && Array.isArray(res.data)) {
       // 格式化季節資料
-      console.log("取得的季度資料:", res.data);
       const seasonMapping = {
         1: '第一季',
         2: '第二季',
@@ -119,10 +109,8 @@ const getSeasonsByYear = async (year) => {
 
       // 更新 seasonItems
       seasonItems.splice(0, seasonItems.length, ...formattedSeasons)
-      // console.log('seasonItems資料:', seasonItems);
       if (seasonItems.length > 0 && !seasonItems.associationId) {
         activeSeason.value = seasonItems[0];
-        // console.log("更新季節", activeSeason.value.label);
         getAssociations(seasonItems[0].associationId);   
       }
       
@@ -134,20 +122,7 @@ const getSeasonsByYear = async (year) => {
   }
 }
 const getAssociations = async (id) => {
-  // try {
-  //   const res = await associationsSrv.getAssociations(id)
-  //   if (res.isSuccess) {
-  //     // console.log('取得的季刊:', res.data)
-  //     Title.value = res.data.title
-  //     CatalogData.value = res.data
-  //     Image.value = res.data.image[0].realFileName
-  //     // console.log(Title.value, CatalogData.value.catalog, Image.value)
-  //   } else {
-  //     console.error('API 錯誤:', res.msg)
-  //   }
-  // } catch (error) {
-  //   console.error('Error fetching associations:', error)
-  // }
+
   try {
     const [associationsRes, ebookRes] = await Promise.all([
       associationsSrv.getAssociations(id),
@@ -165,7 +140,6 @@ const getAssociations = async (id) => {
 
     // 處理 ebook 資料
     if (ebookRes.isSuccess) {
-      console.log('取得的電子書:', ebookRes.data);
       const { realFileName, originalFileName } = ebookRes.data.link;
       fileDatas.splice(0, fileDatas.length, {
         fileName: originalFileName,
@@ -196,23 +170,11 @@ const handleActiveSeasonKeyUpdate = async (key) => {
   }
 }
 
-  // 格式化日期
-  // const formattedDate = computed(() =>
-  //     new Date(CatalogData.value.updated_at).toLocaleString("zh-TW", {
-  //       year: "numeric",
-  //       month: "2-digit",
-  //       day: "2-digit",
-  //       hour: "2-digit",
-  //       minute: "2-digit",
-  //       second: "2-digit",
-  //     })
-  //   );
 
   const getEbook = async (id)=> {
   try {
     const res = await associationsSrv.getEbook(id)
     if (res.isSuccess) {
-      console.log('取得的電子書:', res.data)
       // fileDatas.value = res.data.title
       
     } else {

@@ -63,13 +63,13 @@ onUnmounted(() => {
       />
     </button>
     <ul
-      class="round absolute top-[42px] inline-block min-w-full whitespace-nowrap bg-white py-3 shadow-normal md:top-[50px]"
+      class="list-none round absolute top-[42px] inline-block min-w-full whitespace-nowrap bg-white py-3 shadow-normal md:top-[50px]"
       :class="isOpen ? 'block' : 'hidden'"
     >
       <li
         v-for="item in menuItems"
         :key="item?.key"
-        class="dropmenu-item relative flex cursor-pointer items-center px-8 py-2 hover:bg-[#222]/5"
+        class="dropmenu-item relative flex cursor-pointer items-center px-8 py-2 hover:bg-[#222]/5 list-none"
         :class="{ active: props.activeKey === item.key }"
         @click="handleSelect(item.key)"
       >

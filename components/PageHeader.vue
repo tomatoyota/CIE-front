@@ -14,7 +14,7 @@ for (const item of globalStore.menuitems) {
   // 子層
   if (item.children) {
     for (const child of item.children) {
-      if (child.link === route.name) {
+      if (child.link === route.path) {
         name.value = child.name
       }
     }

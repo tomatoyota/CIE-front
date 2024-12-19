@@ -17,7 +17,7 @@ const timelineData = reactive([
 <template>
   <PageHeader />
   <section class="section-wrapper">
-    <ul class="content mx-auto divide-y divide-dashed divide-[#6E6E6E]">
+    <ul class="content mx-auto divide-y divide-dashed divide-[#6E6E6E] list-none">
       <li
         v-for="item in timelineData"
         :key="item.time"

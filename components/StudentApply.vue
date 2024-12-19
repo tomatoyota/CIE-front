@@ -4,7 +4,7 @@
       <div class="cardHeader">
         <div class="d-flex justify-end">
           <Icon
-            @click="closeDialog"
+            @click="$emit('close')"
             name="mdi:close"
             class="outlinkIcon text-2xl"
           />
@@ -25,7 +25,12 @@
                 type="text"
                 placeholder="請輸入中文姓名"
                 class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
+                :rules="textFieldRule"
+                @blur="validateField('chineseName', formData.chineseName)"
               />
+              <p v-if="errors.chineseName" class="text-sm text-red-500">
+                {{ errors.chineseName }}
+              </p>
             </div>
 
             <!-- 英文姓名 -->
@@ -54,20 +59,29 @@
 
           <!-- 身分證字號 -->
           <div>
-            <label class="mb-2 block font-bold">身分證字號</label>
+            <label class="mb-2 block font-bold"
+              ><label class="mb-2 font-bold text-red-500">*</label
+              >身分證字號</label
+            >
             <input
               v-model="formData.idNumber"
+              @blur="validateField('idNumber', formData.idNumber)"
               type="text"
               placeholder="請輸入身分證字號"
               class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
             />
+            <p v-if="errors.idNumber" class="text-sm text-red-500">
+              {{ errors.idNumber }}
+            </p>
           </div>
 
           <!-- 性別 -->
           <div>
-            <label class="mb-2 font-bold text-red-500">*</label>性別
+            <label class="mb-2 font-bold text-red-500">*</label
+            ><label class="mb-2 font-bold">性別</label>
             <select
               v-model="formData.gender"
+              @blur="validateField('gender', formData.gender)"
               class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
             >
               <option
@@ -78,17 +92,25 @@
                 {{ gender.name }}
               </option>
             </select>
+            <p v-if="errors.gender" class="text-sm text-red-500">
+              {{ errors.gender }}
+            </p>
           </div>
 
           <!-- 出生日期 -->
           <div>
-            <label class="mb-2 font-bold text-red-500">*</label>出生日期
+            <label class="mb-2 font-bold text-red-500">*</label
+            ><label class="mb-2 font-bold">出生日期</label>
             <datepicker
+              @blur="validateField('birthDate', formData.birthDate)"
               v-model="formData.birthDate"
               :clearable="true"
               :enableTimePicker="false"
               placeholder="請選擇出生日期"
             />
+            <p v-if="errors.birthDate" class="text-sm text-red-500">
+              {{ errors.birthDate }}
+            </p>
           </div>
         </div>
 
@@ -96,21 +118,33 @@
         <div class="text-style mb-4 mt-8">聯絡資料</div>
         <div class="grid grid-cols-1 gap-4">
           <div>
-            <label class="mb-2 font-bold text-red-500">*</label>主要通訊地址
+            <label class="mb-2 font-bold text-red-500">*</label
+            ><label class="mb-2 font-bold">主要通訊地址</label>
             <div class="grid grid-cols-3 gap-4">
-              <select
-                v-model="formData.mainAddressCity"
-                class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
-              >
-                <option
-                  v-for="city in cityList"
-                  :key="city.locationId"
-                  :value="city.locationId"
+                <select
+                  @blur="
+                    validateField('mainAddressCity', formData.mainAddressCity)
+                  "
+                  v-model="formData.mainAddressCity"
+                  class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
                 >
-                  {{ city.name }}
-                </option>
-              </select>
+                  <option
+                    v-for="city in cityList"
+                    :key="city.locationId"
+                    :value="city.locationId"
+                  >
+                    {{ city.name }}
+                  </option>
+                </select>
+                
+
               <select
+                @blur="
+                  validateField(
+                    'mainAddressDistrict',
+                    formData.mainAddressDistrict
+                  )
+                "
                 v-model="formData.mainAddressDistrict"
                 class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
               >
@@ -126,28 +160,49 @@
                 v-model="formData.mainAddressPostal"
                 type="text"
                 placeholder="郵遞區號"
-                class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
+                class="w-full rounded border border-gray-300 bg-gray-100 p-2 focus:ring-1 focus:ring-blue-500"
+                readonly
               />
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+              <p v-if="errors.mainAddressCity" class="text-sm text-red-500">
+                  {{ errors.mainAddressCity }}
+                </p>
+                <p v-if="errors.mainAddressDistrict" class="text-sm text-red-500">
+                  {{ errors.mainAddressDistrict }}
+                </p>
+                <p></p>
             </div>
             <div class="mt-4 grid grid-cols-1 gap-4">
               <input
+                @blur="
+                  validateField('mainAddressDetail', formData.mainAddressDetail)
+                "
                 v-model="formData.mainAddressDetail"
                 type="text"
                 placeholder="請輸入道路名/街/里/巷弄號，如：中正路100號16樓之3"
                 class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
               />
+              <p v-if="errors.mainAddressDetail" class="text-sm text-red-500">
+                {{ errors.mainAddressDetail }}
+              </p>
             </div>
           </div>
 
           <!-- 主要聯絡電話 -->
           <div>
-            <label class="mb-2 font-bold text-red-500">*</label>主要聯絡電話
+            <label class="mb-2 font-bold text-red-500">*</label
+            ><label class="mb-2 font-bold">主要聯絡電話</label>
             <input
+            @blur="validateField('mainPhone', formData.mainPhone)"
               v-model="formData.mainPhone"
               type="text"
               placeholder="手機範例：0900123987，市話範例：02-21113333"
               class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
             />
+            <p v-if="errors.mainPhone" class="text-sm text-red-500">
+                {{ errors.mainPhone }}
+              </p>
           </div>
 
           <!-- 次要通訊地址 -->
@@ -190,6 +245,8 @@
                 class="w-full rounded border border-gray-300 bg-gray-100 p-2"
                 readonly
               />
+            </div>
+            <div class="mt-4 grid grid-cols-1 gap-4">
               <input
                 v-model="formData.secondaryAddressDetail"
                 type="text"
@@ -225,20 +282,29 @@
               <input
                 v-model="formData.email"
                 type="email"
+                @blur="validateField('email', formData.email)"
                 placeholder="請輸入電子郵件信箱"
                 class="w-full rounded-l border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
                 :disabled="isLocked"
               />
               
+
               <button
-                class="absolute right-2 top-1/2 -translate-y-1/2 transform rounded px-2 text-blue-800"
+                class="absolute right-2 top-1/2 -translate-y-1/2 transform rounded px-2 text-blue-800 hover:text-blue-400"
                 @click="studentEmail"
               >
                 取得驗證碼
               </button>
               
             </div>
-            <span v-if="showError && emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</span>
+            <p v-if="errors.email" class="text-sm text-red-500">
+                {{ errors.email }}
+              </p>
+            <span
+              v-if="showError && emailError"
+              class="mt-1 text-sm text-red-500"
+              >{{ emailError }}</span
+            >
           </div>
 
           <div class="flex content-center gap-1">
@@ -247,7 +313,8 @@
               type="text"
               placeholder="請輸入驗證碼"
               class="mt-2 w-1/2 rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
-              :disabled="isLocked"
+              @blur="validateField('verifyCode', formData.verifyCode)"
+              :disabled="verifyLocked"
             />
             <button
               class="mt-2 rounded px-4"
@@ -262,12 +329,15 @@
               驗證
             </button>
           </div>
+          <p v-if="errors.verifyCode" class="text-sm text-red-500">
+                {{ errors.verifyCode }}
+              </p>
         </div>
         <!-- 其他資料 -->
         <div class="text-style mb-4 mt-8">其他資料</div>
         <div class="grid grid-cols-1 gap-4">
           <!-- 最高學歷 -->
-          <div class="grid grid-cols-4 gap-1">
+          <div class="grid grid-cols-2 gap-1">
             <input
               v-model="formData.education"
               type="text"
@@ -284,7 +354,7 @@
               v-model="formData.schoolMajor"
               type="text"
               placeholder="請輸入就讀學校與科系"
-              class="w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500 col-span-2"
+              class="col-span-2 w-full rounded border border-gray-300 p-2 focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
@@ -319,8 +389,8 @@
       <div class="cardAction">
         <div class="flex justify-end space-x-2">
           <button
-            class="rounded bg-white px-6 py-2 border border-zinc-800 text-zinc-800 hover:bg-slate-100"
-            @click="closeDialog"
+            class="rounded border border-zinc-800 bg-white px-6 py-2 text-zinc-800 hover:bg-slate-100"
+            @click="$emit('close')"
           >
             返回
           </button>
@@ -334,7 +404,7 @@
           </button> -->
           <button
             type="submit"
-            class="rounded px-6 py-2 text-white font-normal bg-logoColor hover:bg-logoColor-dark"
+            class="hover:bg-logoColor-dark rounded bg-logoColor px-6 py-2 font-normal text-white"
             @click="submitMember"
           >
             確定提交
@@ -346,6 +416,7 @@
 </template>
 
 <script>
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import studentSrv from '@/service/studentMember.js'
@@ -354,567 +425,478 @@ import locationData from '@/utils/helpers/locationList.js'
 import swalWithCustomStyles from '@/utils/sweetAlert'
 // import LoadingComponent from '@/components/LoadingComponent.vue';
 
+
 export default {
-  setup() {},
   components: {
     Datepicker
     // LoadingComponent,
   },
-  data() {
-    return {
-      reduce: {
-        type: Function,
-        default: (option) => option
-      },
-      tab: 1,
-      search: '',
-      textFieldRule: [(v) => !!v || '此欄位為必填'],
-      selectRule: [(v) => !!v || '此欄位為必填'],
-      branchList: ['台北分會', '高雄分會'],
-      formData: {
-        frontUserId: '',
-        password: '',
-        chineseName: '',
-        englishName: '',
-        idNumber: '',
-        gender: null,
-        birthDate: '',
-        mainAddressCity: null,
-        mainAddressDistrict: null,
-        mainAddressPostal: '',
-        mainAddressDetail: '',
-        mainPhone: '',
-        secondaryAddressCity: null,
-        secondaryAddressDistrict: null,
-        secondaryAddressPostal: '',
-        secondaryAddressDetail: '',
-        secondaryPhone: '',
-        email: '',
-        education: '',
-        graduationYear: '',
-        schoolMajor: '',
-        industry: '',
-        company: '',
-        position: '',
-        entryDate: '',
-        branch: null,
-        level: null,
-        paymentStatus: null,
-        subscriptionStatus: '正常',
-        magazineSubscription: null,
-        infoSubscription: null,
-        verifyCode: ''
-      },
-      followMainAddress: false,
-      followMainPhone: false,
-      pageAction: 'add',
-      pageTitle: '',
-      branchList: [
-        {
-          name: '台北分會',
-          value: 1
-        },
-        {
-          name: '高雄分會',
-          value: 2
-        }
-      ],
-      cityList: [],
-      secondaryCityList: [],
-      districtList: [],
-      secondaryDistrictList: [],
-      genderList: [
-        {
-          name: '女',
-          value: 0
-        },
-        {
-          name: '男',
-          value: 1
-        }
-      ],
-      valid: false,
-      loading: false,
-      isLocked: false,
-      showError: false,
+  emits: ['close'],
+  setup() {
+    const reduce = ref((option) => option)
+    const tab = ref(1)
+    const search = ref('')
+    // const emit = defineEmits(['close'])
+
+    const textFieldRule = [(v) => !!v || '此欄位為必填']
+    const selectRule = [
+      (v) => (v !== null && v !== undefined) || '此欄位為必填'
+    ]
+    const chineseNameRule = [
+      (v) => !!v || '此欄位為必填',
+      (v) => /^[\u4E00-\u9FFF]+$/.test(v) || '僅可輸入中文'
+    ]
+    const idNumberRule = [
+      (v) => !!v || '此欄位為必填',
+      (v) => /^[A-Z][1-2]\d{8}$/.test(v) || '身分證字號格式不正確'
+    ]
+    const phoneRule = [
+      (v) => !!v || '此欄位為必填',
+      (v) => /^(09\d{8}|0\d{1,2}-\d{6,8})$/.test(v) || '電話格式不正確',
+      // (v) => /^0[2-9]-\d{7}$/.test(v) || '市話格式錯誤，例如：02-1234567'
+    ]
+    const emailRule = [
+      (v) => !!v || '此欄位為必填',
+      (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || '電子郵件格式不正確'
+    ]
+    const verifyCodeRule = [
+      (v) => !!v || '此欄位為必填',
+    ]
+    const errors = reactive({ chineseName: '' })
+
+    const branchList = ref([
+      { name: '台北分會', value: 1 },
+      { name: '高雄分會', value: 2 }
+    ])
+
+    const cityList = ref([])
+    const secondaryCityList = ref([])
+    const districtList = ref([])
+    const secondaryDistrictList = ref([])
+    const genderList = ref([
+      { name: '女', value: 0 },
+      { name: '男', value: 1 }
+    ])
+
+    const formData = reactive({
+      frontUserId: '',
+      password: '',
+      chineseName: '',
+      englishName: '',
+      idNumber: '',
+      gender: null,
+      birthDate: '',
+      mainAddressCity: null,
+      mainAddressDistrict: null,
+      mainAddressPostal: '',
+      mainAddressDetail: '',
+      mainPhone: '',
+      secondaryAddressCity: null,
+      secondaryAddressDistrict: null,
+      secondaryAddressPostal: '',
+      secondaryAddressDetail: '',
+      secondaryPhone: '',
+      email: '',
+      education: '',
+      graduationYear: '',
+      schoolMajor: '',
+      industry: '',
+      company: '',
+      position: '',
+      entryDate: '',
+      branch: null,
+      level: null,
+      paymentStatus: null,
+      subscriptionStatus: '正常',
+      magazineSubscription: null,
+      infoSubscription: null,
+      verifyCode: ''
+    })
+
+    const followMainAddress = ref(false)
+    const followMainPhone = ref(false)
+    const pageAction = ref('add')
+    const pageTitle = ref('')
+    const valid = ref(false)
+    const loading = ref(false)
+    const isLocked = ref(false)
+    const verifyLocked = ref(false)
+    const showError = ref(false)
+
+    // const isEmailValid = computed(() =>
+    //   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    // )
+    const isEmailValid = () => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return emailRegex.test(formData.email)
     }
-  },
-  mounted() {
-    // this.initEditor()
-    this.getLocationList()
-
-  },
-  watch: {
-    followMainAddress(val) {
-      if (val) {
-        this.formData.secondaryAddressCity = this.formData.mainAddressCity
-        this.formData.secondaryAddressDistrict =
-          this.formData.mainAddressDistrict
-        this.formData.secondaryAddressPostal = this.formData.mainAddressPostal
-        this.formData.secondaryAddressDetail = this.formData.mainAddressDetail
-      } else {
-        this.formData.secondaryAddressCity = null
-        this.formData.secondaryAddressDistrict = null
-        this.formData.secondaryAddressPostal = ''
-        this.formData.secondaryAddressDetail = ''
-      }
-    },
-    followMainPhone(val) {
-      if (val) {
-        this.formData.secondaryPhone = this.formData.mainPhone
-      } else {
-        this.formData.secondaryPhone = ''
-      }
-    },
-    'formData.mainAddressCity': {
-      handler(val) {
-        const matchCity = this.cityList.find((city) => city.locationId === val)
-        const districtList = matchCity.children
-        const mainPostal = matchCity.postalCode
-        this.districtList = districtList
-        this.formData.mainAddressPostal = mainPostal
-      },
-      deep: true
-    },
-    'formData.secondaryAddressCity': {
-      handler(val) {
-        const matchCity = this.secondaryCityList.find(
-          (city) => city.locationId === val
-        )
-
-        // 因為有同主要地址的checkbox，所以要判斷是否有matchCity，這樣 checkbox 才能順利切換
-        if (matchCity) {
-          const districtList = matchCity.children
-          const secondaryPostal = matchCity.postalCode
-          this.secondaryDistrictList = districtList
-          this.formData.secondaryAddressPostal = secondaryPostal
-        }
-      },
-      deep: true
-    }
-  },
-  computed: {
-    isEmailValid() {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(this.formData.email);
-    },
-    // 動態設定錯誤訊息
-    emailError() {
-      if (!this.formData.email) {
-        return '請輸入電子郵件信箱';
-      } else if (!this.isEmailValid) {
-        return '請輸入有效的電子郵件格式';
-      }
-      return '';
-    },
-    isFormValid() {
-      // 檢查每個必填欄位是否有值
-      return (
-        this.formData.chineseName &&
-        this.formData.gender &&
-        this.formData.birthDate &&
-        this.formData.mainAddressCity &&
-        this.formData.mainAddressDistrict &&
-        this.formData.mainAddressPostal &&
-        this.formData.mainAddressDetail &&
-        this.formData.mainPhone &&
-        this.formData.email &&
-        this.formData.verifyCode
-      );
-    },
-  },
-  methods: {
-    setPage() {
-      const action = this.$route.query.action
-      this.pageAction = action
-      if (action === 'add') {
-        this.pageTitle = '新增會員'
-      } else if (action === 'edit') {
-        const store = usePersonalStore()
-        const editDataStore = storeToRefs(store)
-        const editData = editDataStore.editData.value
-        this.pageTitle = `會員資料編輯-${editData.frontUserId}${editData.Individuals[0].chineseName}`
-        this.formData = editData.Individuals[0]
-      }
-      this.$router.replace('/admin/studentView')
-    },
-    transformDate(date) {
-      if (date) {
-        const year = date.getFullYear()
-        let month = date.getMonth() + 1
-        let day = date.getDate()
-
-        // 將月份和日期補0
-        month = month < 10 ? '0' + month : month
-        day = day < 10 ? '0' + day : day
-
-        return `${year}-${month}-${day}`
+    const emailError = computed(() => {
+      if (!formData.email) {
+        return '請輸入電子郵件信箱'
+      } else if (!isEmailValid.value) {
+        return '請輸入有效的電子郵件格式'
       }
       return ''
-    },
-    passwordGenerator() {
-      const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      const digits = '0123456789'
+    })
 
-      // 確保有 2 個大寫和 2 個小寫字母
-      let upperLetters = ''
-      let lowerLetters = ''
-      while (upperLetters.length < 2) {
-        const char = letters.charAt(Math.floor(Math.random() * 26) + 26) // 大寫字母
-        if (!upperLetters.includes(char)) upperLetters += char
+    const validateField = (field, value) => {
+      const rulesMap = {
+        chineseName: chineseNameRule,
+        idNumber: idNumberRule,
+        mainPhone: phoneRule,
+        email: emailRule,
+        verifyCode: verifyCodeRule, 
+        // idNumber: selectRule,
+        gender: selectRule,
+        birthDate: textFieldRule,
+        mainAddressCity: selectRule,
+        mainAddressDistrict: selectRule,
+        mainAddressDetail: textFieldRule
       }
-      while (lowerLetters.length < 2) {
-        const char = letters.charAt(Math.floor(Math.random() * 26)) // 小寫字母
-        if (!lowerLetters.includes(char)) lowerLetters += char
+      const rules = rulesMap[field] || textFieldRule
+      const error = rules
+        .map((rule) => rule(value))
+        .find((result) => result !== true)
+      errors[field] = error || null
+      return !error
+    }
+
+    const validateForm = () => {
+      const fieldsToValidate = [
+        { field: 'chineseName', value: formData.chineseName },
+        { field: 'idNumber', value: formData.idNumber },
+        { field: 'mainPhone', value: formData.mainPhone },
+        { field: 'email', value: formData.email },
+        { field: 'verifyCode', value: formData.verifyCode },
+        { field: 'gender', value: formData.gender },
+        { field: 'birthDate', value: formData.birthDate },
+        { field: 'mainAddressCity', value: formData.mainAddressCity },
+        { field: 'mainAddressDistrict', value: formData.mainAddressDistrict },
+        { field: 'mainAddressDetail', value: formData.mainAddressDetail },
+        
+      ]
+      let isValid = true
+      fieldsToValidate.forEach(({ field, value }) => {
+        if (!validateField(field, value)) {
+          isValid = false
+        }
+      })
+      return isValid
+    }
+
+    // watch(followMainAddress, (val) => {
+    //   if (val) {
+    //     formData.secondaryAddressCity = formData.mainAddressCity
+    //     formData.secondaryAddressDistrict = formData.mainAddressDistrict
+    //     formData.secondaryAddressPostal = formData.mainAddressPostal
+    //     formData.secondaryAddressDetail = formData.mainAddressDetail
+    //   } else {
+    //     formData.secondaryAddressCity = null
+    //     formData.secondaryAddressDistrict = null
+    //     formData.secondaryAddressPostal = ''
+    //     formData.secondaryAddressDetail = ''
+    //   }
+    // })
+    // 監聽 followMainAddress
+    // watch(followMainAddress, (val) => {
+    //   if (val) {
+    //     formData.secondaryAddressCity = formData.mainAddressCity
+    //     formData.secondaryAddressDistrict = formData.mainAddressDistrict
+    //     formData.secondaryAddressPostal = formData.mainAddressPostal
+    //     formData.secondaryAddressDetail = formData.mainAddressDetail
+    //   } else {
+    //     formData.secondaryAddressCity = null
+    //     formData.secondaryAddressDistrict = null
+    //     formData.secondaryAddressPostal = ''
+    //     formData.secondaryAddressDetail = ''
+    //   }
+    // })
+    watch(followMainAddress, (val) => {
+  if (val) {
+    formData.secondaryAddressCity = formData.mainAddressCity
+    formData.secondaryAddressDistrict = '' // 強制觸發 watch
+    nextTick(() => {
+      formData.secondaryAddressDistrict = formData.mainAddressDistrict
+      formData.secondaryAddressDetail = formData.mainAddressDetail
+    })
+  } else {
+    formData.secondaryAddressCity = null
+    formData.secondaryAddressDistrict = null
+    formData.secondaryAddressPostal = ''
+    formData.secondaryAddressDetail = ''
+  }
+})
+    
+
+    // 監聽 followMainPhone
+    watch(followMainPhone, (val) => {
+      formData.secondaryPhone = val ? formData.mainPhone : ''
+    })
+
+    // 監聽 mainAddressCity
+    watch(
+      () => formData.mainAddressCity,
+      (val) => {
+        const matchCity = cityList.value.find((city) => city.locationId === val)
+        districtList.value = matchCity ? matchCity.children || [] : []
+      }
+    )
+
+    // 監聽 mainAddressDistrict
+    watch(
+      () => formData.mainAddressDistrict,
+      (val) => {
+        const selectedDistrict = districtList.value.find(
+          (district) => district.locationId === val
+        )
+        formData.mainAddressPostal = selectedDistrict
+          ? selectedDistrict.postalCode
+          : ''
+      }
+    )
+
+    // 監聽 secondaryAddressCity
+    watch(
+      () => formData.secondaryAddressCity,
+      (val) => {
+        const matchCity = secondaryCityList.value.find(
+          (city) => city.locationId === val
+        )
+        secondaryDistrictList.value = matchCity ? matchCity.children || [] : []
+      }
+    )
+
+    // 監聽 secondaryAddressDistrict
+    watch(
+      () => formData.secondaryAddressDistrict,
+      (val) => {
+        const selectedDistrict = secondaryDistrictList.value.find(
+          (district) => district.locationId === val
+        )
+        formData.secondaryAddressPostal = selectedDistrict
+          ? selectedDistrict.postalCode
+          : ''
+      }
+    )
+
+    watch(followMainPhone, (val) => {
+      if (val) {
+        formData.secondaryPhone = formData.mainPhone
+      } else {
+        formData.secondaryPhone = ''
+      }
+    })
+
+    const getLocationList = async () => {
+      cityList.value = locationData
+      secondaryCityList.value = locationData
+    }
+
+    onMounted(() => {
+      getLocationList()
+    })
+    const showAlert = (message, isSuccess = true) => {
+      swalWithCustomStyles.fire({
+        toast: true,
+        position: 'center',
+        title: message,
+        confirmButtonColor: '#0E2A34',
+        confirmButtonText: '確認',
+        background: '#F0F0F2',
+        width: 400
+      })
+    }
+    watch(isLocked, (newVal) => {
+  console.log('isLocked changed to:', newVal);
+});
+    const studentEmail = async () => {
+      if (!isEmailValid()) {
+        showAlert('無效的電子郵件地址', false)
+        return
       }
 
-      // 生成 8 個隨機數字
-      let randomDigits = ''
-      for (let i = 0; i < 8; i++) {
-        randomDigits += digits.charAt(Math.floor(Math.random() * digits.length))
+      try {
+        const obj = { email: formData.email }
+        const res = await studentSrv.studentEmail(obj)
+
+        if (res.isSuccess) {
+          if (res.data.rtnCode === '0002') {
+            const result = await swalWithCustomStyles.fire({
+              toast: true,
+              position: 'center',
+              title: `${res.data.rtnMsg}`,
+              confirmButtonColor: '#0E2A34',
+              confirmButtonText: '確認',
+              background: '#F0F0F2',
+              width: 400
+            })
+
+            if (result.isConfirmed) {
+            isLocked.value = true
+          }
+          } else {
+            showAlert(res.data.rtnMsg)
+          }
+        } else {
+          showAlert(res.msg, false)
+        }
+      } catch (error) {
+        console.error('Error:', error)
+        showAlert('系統錯誤', false)
       }
+    }
+    watch(verifyLocked, (newVal) => {
+  console.log('verifyLocked changed to:', newVal);
+});
+watch(isLocked, (newVal) => {
+  console.log('isLocked changed to:', newVal);
+});
+    const verifyEmail = async () => {
+      try {
+        const obj = { email: formData.email }
+        const res = await studentSrv.verifyEmail(obj)
 
-      // 組合密碼並打亂順序
-      const password = (upperLetters + lowerLetters + randomDigits)
-        .split('')
-        .sort(() => 0.5 - Math.random())
-        .join('')
+        if (res.isSuccess) {
+          if (res.data.rtnCode === '0000') {
+            const result = await swalWithCustomStyles.fire({
+              toast: true,
+              position: 'center',
+              title: `${res.data.rtnMsg}`,
+              confirmButtonColor: '#0E2A34',
+              confirmButtonText: '確認',
+              background: '#F0F0F2',
+              width: 400
+            })
 
-      return password
-    },
-    async getLocationList() {
-      this.cityList = locationData
-      this.secondaryCityList = locationData
-      // try{
-      //   await studentSrv.getLocationList(headers).then((res) => {
-      //     if(res.isSuccess){
-      //       this.cityList = res.data.data
-      //       this.secondaryCityList = res.data.data
-      //     }
-      //   }).catch((error) => {
-      //     swalWithCustomStyles.fire({
-      //       toast: true,
-      //       position: 'center',
-      //       title: `${error}`,
-      //       confirmButtonColor: '#0E2A34',
-      //       confirmButtonText: '確認',
-      //       background: '#F0F0F2',
-      //       width: 400
-      //     });
-      //   });
-      // }catch{
+            if (result.isConfirmed) {
+              console.log('確認按鈕已點擊');
+              isLocked.value = true
+            }
+          } else {
+            showAlert(res.data.rtnMsg)
+          }
+        } else {
+          showAlert(res.msg, false)
+        }
+      } catch (error) {
+        console.error('Error:', error)
+        showAlert('系統錯誤', false)
+      }
+    }
 
-      // }
-    },
-    async studentEmail() {
-      this.showError = true;
+    const studentVerifyEmail = async () => {
+      try {
+        const obj = { email: formData.email, verifyCode: formData.verifyCode }
+        const res = await studentSrv.studentVerifyEmail(obj)
 
-      if (!this.isEmailValid) {
+        if (res.isSuccess) {
+          if (res.data.rtnCode === '0002') {
+            const result = await swalWithCustomStyles.fire({
+              toast: true,
+              position: 'center',
+              title: `${res.data.rtnMsg}`,
+              confirmButtonColor: '#0E2A34',
+              confirmButtonText: '確認',
+              background: '#F0F0F2',
+              width: 400
+            })
+            if (result.isConfirmed) {
+              console.log('確認按鈕已點擊');
+              verifyLocked.value = true
+            }
+          } else {
+            showAlert(res.data.rtnMsg)
+          }
+        } else {
+          showAlert(res.msg, false)
+        }
+      } catch (error) {
+        console.error('Error:', error)
+        showAlert('系統錯誤', false)
+      }
+    }
+
+    const submitMember = async () => {
+      if (!validateForm()) {
+        showAlert('請完成表單', false)
         return;
       }
-      
+      loading.value = true
+
       try {
         const obj = {
-          email: this.formData.email
+          ...formData,
+          gender: parseInt(formData.gender),
+          birthDate: formData.birthDate,
+          magazineSubscription: !formData.magazineSubscription ? 1 : 0,
+          infoSubscription: !formData.infoSubscription ? 1 : 0
         }
-        console.log(obj)
-        await studentSrv
-          .studentEmail(obj)
-          .then((res) => {
-            if (res.isSuccess) {
-              // rtnCode 為 0000 的情況
-              if (res.data.rtnCode === '0000') {
-                swalWithCustomStyles.fire({
-                  toast: true,
-                  position: 'center',
-                  title: `${res.data.rtnMsg}`,
-                  confirmButtonColor: '#0E2A34',
-                  confirmButtonText: '確認',
-                  background: '#F0F0F2',
-                  width: 400
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    // this.$router.push('/admin/Member');
-                  }
-                })
-              } else {
-                // rtnCode 不為 0000 的情況
-                swalWithCustomStyles.fire({
-                  toast: true,
-                  position: 'center',
-                  title: `${res.data.rtnMsg}`,
-                  confirmButtonColor: '#0E2A34',
-                  confirmButtonText: '確認',
-                  background: '#F0F0F2',
-                  width: 400
-                })
-              }
-            } else {
-              // api 回傳失敗
-              swalWithCustomStyles.fire({
-                toast: true,
-                position: 'center',
-                title: `${res.msg}`,
-                confirmButtonColor: '#0E2A34',
-                confirmButtonText: '確認',
-                background: '#F0F0F2',
-                width: 400
-              })
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error)
-          })
-      } catch {
-        swalWithCustomStyles.fire({
-          toast: true,
-          position: 'center',
-          title: `${error}`,
-          confirmButtonColor: '#0E2A34',
-          confirmButtonText: '確認',
-          background: '#F0F0F2',
-          width: 400
-        })
-      }
-    },
-    async verifyEmail() {
-      try {
-        const obj = {
-          email: this.formData.email
+
+        const res = await studentSrv.postMember(obj)
+
+        if (res.isSuccess) {
+          if (res.data.rtnCode === '0000') {
+            const result = await swalWithCustomStyles.fire({
+              toast: true,
+              position: 'center',
+              title: `${res.data.rtnMsg}`,
+              confirmButtonColor: '#0E2A34',
+              confirmButtonText: '確認',
+              background: '#F0F0F2',
+              width: 400
+            })
+
+            if (result.isConfirmed) 
+            // location.reload()
+            this.$emit('close');
+          } else {
+            showAlert(res.data.rtnMsg)
+          }
+        } else {
+          showAlert(res.msg, false)
         }
-        await studentSrv
-          .verifyEmail(obj)
-          .then((res) => {
-            if (res.isSuccess) {
-              // rtnCode 為 0000 的情況
-              if (res.data.rtnCode === '0000') {
-                swalWithCustomStyles.fire({
-                  toast: true,
-                  position: 'center',
-                  title: `${res.data.rtnMsg}`,
-                  confirmButtonColor: '#0E2A34',
-                  confirmButtonText: '確認',
-                  background: '#F0F0F2',
-                  width: 400
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    this.$router.push('/admin/Member')
-                  }
-                })
-              } else {
-                // rtnCode 不為 0000 的情況
-                swalWithCustomStyles.fire({
-                  toast: true,
-                  position: 'center',
-                  title: `${res.data.rtnMsg}`,
-                  confirmButtonColor: '#0E2A34',
-                  confirmButtonText: '確認',
-                  background: '#F0F0F2',
-                  width: 400
-                })
-              }
-            } else {
-              // api 回傳失敗
-              swalWithCustomStyles.fire({
-                toast: true,
-                position: 'center',
-                title: `${res.data.data.rtnMsg}`,
-                confirmButtonColor: '#0E2A34',
-                confirmButtonText: '確認',
-                background: '#F0F0F2',
-                width: 400
-              })
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error)
-          })
-      } catch {
-        swalWithCustomStyles.fire({
-          toast: true,
-          position: 'center',
-          title: `${error}`,
-          confirmButtonColor: '#0E2A34',
-          confirmButtonText: '確認',
-          background: '#F0F0F2',
-          width: 400
-        })
-      }
-    },
-    async studentVerifyEmail() {
-      try {
-        const obj = {
-          email: this.formData.email,
-          verifyCode: this.formData.verifyCode
-        }
-        await studentSrv
-          .studentVerifyEmail(obj)
-          .then((res) => {
-            if (res.isSuccess) {
-              // rtnCode 為 0000 的情況
-              if (res.data.rtnCode === '0000') {
-                swalWithCustomStyles.fire({
-                  toast: true,
-                  position: 'center',
-                  title: `${res.data.rtnMsg}`,
-                  confirmButtonColor: '#0E2A34',
-                  confirmButtonText: '確認',
-                  background: '#F0F0F2',
-                  width: 400
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    this.isLocked = true;
-                    // this.$router.push('/admin/Member')
-                  }
-                })
-              } else {
-                // rtnCode 不為 0000 的情況
-                swalWithCustomStyles.fire({
-                  toast: true,
-                  position: 'center',
-                  title: `${res.data.rtnMsg}`,
-                  confirmButtonColor: '#0E2A34',
-                  confirmButtonText: '確認',
-                  background: '#F0F0F2',
-                  width: 400
-                })
-              }
-            } else {
-              // api 回傳失敗
-              swalWithCustomStyles.fire({
-                toast: true,
-                position: 'center',
-                title: `${res.data.data.rtnMsg}`,
-                confirmButtonColor: '#0E2A34',
-                confirmButtonText: '確認',
-                background: '#F0F0F2',
-                width: 400
-              })
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error)
-          })
-      } catch {
-        swalWithCustomStyles.fire({
-          toast: true,
-          position: 'center',
-          title: `${error}`,
-          confirmButtonColor: '#0E2A34',
-          confirmButtonText: '確認',
-          background: '#F0F0F2',
-          width: 400
-        })
-      }
-    },
-    async submitMember() {
-      this.loading = true
-      try {
-        const obj = {
-          // frontUserId: this.formData.frontUserId,
-          // password: this.passwordGenerator(),
-          chineseName: this.formData.chineseName,
-          englishName: this.formData.englishName,
-          idNumber: this.formData.idNumber,
-          gender: parseInt(this.formData.gender),
-          birthDate:
-            this.pageAction === 'add'
-              ? this.transformDate(this.formData.birthDate)
-              : this.formData.birthDate,
-          mainAddressCity: this.formData.mainAddressCity,
-          mainAddressDistrict: this.formData.mainAddressDistrict,
-          mainAddressPostal: this.formData.mainAddressPostal,
-          mainAddressDetail: this.formData.mainAddressDetail,
-          mainPhone: this.formData.mainPhone,
-          secondaryAddressCity: this.formData.secondaryAddressCity,
-          secondaryAddressDistrict: this.formData.secondaryAddressDistrict,
-          secondaryAddressPostal: this.formData.secondaryAddressPostal,
-          secondaryAddressDetail: this.formData.secondaryAddressDetail,
-          secondaryPhone: this.formData.secondaryPhone,
-          email: this.formData.email,
-          education: this.formData.education,
-          graduationYear: this.formData.graduationYear,
-          schoolMajor: this.formData.schoolMajor,
-          subscriptionStatus: this.formData.subscriptionStatus,
-          magazineSubscription: !this.formData.magazineSubscription
-            ? 1
-            : 0,
-          infoSubscription: !this.formData.infoSubscription ? 1 : 0,
-          verifyCode: this.formData.verifyCode
-        }
-        // const apiName = this.pageAction === 'add' ? 'postMember' : 'putMember'
-        // const id = obj.frontUserId
-        studentSrv.postMember(obj)
-          .then((res) => {
-            // api 回傳成功
-            if (res.isSuccess) {
-              // rtnCode 為 0000 的情況
-              if (res.data.rtnCode === '0000') {
-                this.$router.push('/apply')
-                // swalWithCustomStyles.fire({
-                //   toast: true,
-                //   position: 'center',
-                //   title: `${res.data.rtnMsg}`,
-                //   confirmButtonColor: '#0E2A34',
-                //   confirmButtonText: '確認',
-                //   background: '#F0F0F2',
-                //   width: 400
-                // }).then((result) => {
-                //   if (result.isConfirmed) {
-                //     this.$router.push('/apply')
-                //   }
-                // })
-              } else {
-                // rtnCode 不為 0000 的情況
-                swalWithCustomStyles.fire({
-                  toast: true,
-                  position: 'center',
-                  title: `${res.data.rtnMsg}`,
-                  confirmButtonColor: '#0E2A34',
-                  confirmButtonText: '確認',
-                  background: '#F0F0F2',
-                  width: 400
-                })
-              }
-            } else {
-              // api 回傳失敗
-              swalWithCustomStyles.fire({
-                toast: true,
-                position: 'center',
-                title: `${res.data.data.rtnMsg}`,
-                confirmButtonColor: '#0E2A34',
-                confirmButtonText: '確認',
-                background: '#F0F0F2',
-                width: 400
-              })
-            }
-          })
-          .catch((error) => {
-            // 處理錯誤情況
-            console.error('Error:', error)
-          })
-          .finally(() => {
-            // 無論成功或失敗都會執行，目前至少先關閉 loading，之後再依需求調整
-            this.loading = false
-          })
       } catch (error) {
-        swalWithCustomStyles.fire({
-          toast: true,
-          position: 'center',
-          title: `${error}`,
-          confirmButtonColor: '#0E2A34',
-          confirmButtonText: '確認',
-          background: '#F0F0F2',
-          width: 400
-        })
-        this.loading = false
+        console.error('Error:', error)
+        showAlert(res.msg, false)
+      } finally {
+        loading.value = false
       }
-    },
-    closeDialog() {
-      this.$emit('close')
-    },
-    toPrev() {
-      this.$router.push('/admin/Member')
+    }
+
+    return {
+      reduce,
+      tab,
+      search,
+      textFieldRule,
+      selectRule,
+      idNumberRule,
+      phoneRule,
+      emailRule,
+      errors,
+      branchList,
+      cityList,
+      secondaryCityList,
+      districtList,
+      secondaryDistrictList,
+      genderList,
+      formData,
+      followMainAddress,
+      followMainPhone,
+      pageAction,
+      pageTitle,
+      valid,
+      loading,
+      isLocked,
+      verifyLocked,
+      showError,
+      isEmailValid,
+      emailError,
+      validateField,
+      validateForm,
+      studentEmail,
+      verifyEmail,
+      studentVerifyEmail,
+      submitMember
     }
   }
 }

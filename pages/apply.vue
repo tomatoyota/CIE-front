@@ -129,13 +129,13 @@ const hideApplyDialog = () => {
       </div>
       <div v-else-if="item.title === '會費說明'">
         會費請擇一方式繳納：
-        <ol class="mb-6 list-decimal">
+        <ol class="mb-6 list-decimal list-none">
           <li>現金</li>
           <li>
             郵政劃撥，收款戶名：中國電機工程學會謝繼茂，收款帳號：00133442
           </li>
         </ol>
-        <ul class="list-disc">
+        <ul class="list-disc list-none">
           <li>
             個人會員
             <Table
@@ -157,10 +157,10 @@ const hideApplyDialog = () => {
         </ul>
       </div>
       <div v-else>
-        <ul class="list-disc">
+        <ul class="list-disc list-none">
           <li class="mb-7">
             權利
-            <ol class="list-decimal">
+            <ol class="list-decimal list-none">
               <li>永久會員、正會員均有發言權、表決權、選舉權、被選舉權。</li>
               <li>初級會員有發言權，無表決權、選舉權、被選舉權。</li>
               <li>
@@ -179,7 +179,7 @@ const hideApplyDialog = () => {
           </li>
           <li>
             義務
-            <ol class="list-decimal">
+            <ol class="list-decimal list-none">
               <li>
                 遵守本會章程、信條，及會員（會員代表）大會、理事會議之議決案。
               </li>

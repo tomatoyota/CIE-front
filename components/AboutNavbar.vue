@@ -47,7 +47,7 @@ const handleItemClick = (event, id) => {
 }
 watchEffect(
   () => {
-    console.log('新的id:' + props.activeId)
+    // console.log('新的id:' + props.activeId)
     const item = navItemRefs.value.find((item) => item.id === props.activeId)
     if (item) {
       const scrollLeft = item.el.offsetLeft
@@ -78,7 +78,7 @@ defineExpose({
     ref="navbarContainerRef"
   >
     <ul
-      class="about-navbar scroll-container flex flex-nowrap bg-white px-4 py-2"
+      class="about-navbar scroll-container flex flex-nowrap bg-white px-4 py-2 list-none"
       :class="isHeaderTop ? 'about-down' : 'about-top'"
       ref="navbarRef"
     >
@@ -86,7 +86,7 @@ defineExpose({
         v-for="item in list"
         :ref="(el) => setNavItemRefs(el, item)"
         :key="item.id"
-        class="flex-shrink-0 flex-grow-0 basis-auto cursor-pointer px-4 py-2 hover:bg-[#222222]/5"
+        class="flex-shrink-0 flex-grow-0 basis-auto cursor-pointer px-4 py-2 hover:bg-[#222222]/5 list-none"
         :class="item.id === activeId ? 'active' : ''"
         @click="handleItemClick($event, item.id)"
       >

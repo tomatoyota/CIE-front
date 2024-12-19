@@ -1,6 +1,7 @@
 <script setup>
 // 自訂變數
 const menuItems = reactive([
+  { key: '112', label: '112年度' },
   { key: '111', label: '111年度' },
   { key: '110', label: '110年度' },
   { key: '109', label: '109年度' },
@@ -12,6 +13,36 @@ const fileDatas = reactive([
 ])
 
 const dataList = reactive([
+{
+    time: '112',
+    list: [
+      {
+        name: '洪瑞華',
+        roles: ['國立陽明交通大學電子研究所講座教授'],
+        path: 'honor_fellow/112_01.png'
+      },
+      {
+        name: '陳銘憲',
+        roles: ['國立臺灣大學電機工程學系講座教授'],
+        path: 'honor_fellow/112_02.png'
+      },
+      {
+        name: '劉柏村',
+        roles: ['國立陽明交通大學光電工程學系講座教授兼校區研發長'],
+        path: 'honor_fellow/112_03.png'
+      },
+      {
+        name: '謝孫源',
+        roles: ['國立成功大學資訊工程學系講座教授', '財團法人成大研發 基金會執行長'],
+        path: 'honor_fellow/112_04.png'
+      },
+      {
+        name: '簡志誠',
+        roles: ['中華電信股份有限公司執行副總經理'],
+        path: 'honor_fellow/112_05.png'
+      }
+    ]
+  },
   {
     time: '111',
     list: [

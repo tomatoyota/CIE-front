@@ -46,41 +46,41 @@ const showUserButton = computed(() => {
 const handleResize = () => {
   isWindowNarrow.value = window.innerWidth < 1200 // 檢查視窗寬度
 }
-const tokenVerfy = async (url) => {
-  // 提取 URL 參數
-  const urlParams = new URLSearchParams(url.split('?')[1])
-  const token = urlParams.get('token')
-  const email = urlParams.get('email')
+// const tokenVerfy = async (url) => {
+//   // 提取 URL 參數
+//   const urlParams = new URLSearchParams(url.split('?')[1])
+//   const token = urlParams.get('token')
+//   const email = urlParams.get('email')
 
-  console.log('token:', token)
-  console.log('email:', email)
+//   console.log('token:', token)
+//   console.log('email:', email)
 
-  if (!token || !email) {
-    console.log('驗證連結格式不正確，請檢查後重新輸入')
-    return
-  }
+//   if (!token || !email) {
+//     console.log('驗證連結格式不正確，請檢查後重新輸入')
+//     return
+//   }
 
-  const obj = { email, token }
+//   const obj = { email, token }
 
-  const verifyResponse = await testSrv.sendVerificationEmail(obj)
-  console.log('verifyResponse:', verifyResponse)
+//   const verifyResponse = await testSrv.sendVerificationEmail(obj)
+//   console.log('verifyResponse:', verifyResponse)
 
-  if (verifyResponse.isSuccess === true) {
-    showSuccess.value = true
-    rtnMsg.value = verifyResponse.rtnMsg
-    console.log('驗證郵件已發送到您的電子郵件地址:', verifyResponse)
+//   if (verifyResponse.isSuccess === true) {
+//     showSuccess.value = true
+//     rtnMsg.value = verifyResponse.rtnMsg
+//     console.log('驗證郵件已發送到您的電子郵件地址:', verifyResponse)
 
-    const userAccount = verifyResponse.userAccount
-    if (userAccount) {
-      localStorage.setItem('userAccount', userAccount)
-      console.log('userAccount 已儲存:', userAccount)
-    } else {
-      console.warn('回應中未包含 userAccount')
-    }
-  } else {
-    console.error('發送驗證郵件失敗:', verifyResponse.msg)
-  }
-}
+//     const userAccount = verifyResponse.userAccount
+//     if (userAccount) {
+//       localStorage.setItem('userAccount', userAccount)
+//       console.log('userAccount 已儲存:', userAccount)
+//     } else {
+//       console.warn('回應中未包含 userAccount')
+//     }
+//   } else {
+//     console.error('發送驗證郵件失敗:', verifyResponse.msg)
+//   }
+// }
 
 const navigateToGroupProfile = () => {
   const userId = loginStore.userProfile.userId
@@ -104,7 +104,7 @@ const navigateToPresonalProfile = () => {
   const userId = loginStore.userProfile.userId
   if (userId !== null) {
     editSrv.editPersonalProfile(userId).then((res) => {
-      console.log('response:', res)
+      // console.log('response:', res)
       userStore.updateEditData(res.data.data)
     })
     router.push('/personalProfile')
@@ -129,8 +129,6 @@ onMounted(() => {
   const userProfile = userHelper.getUserProfile() // 從 localStorage 獲取 userProfile
   const userIsLogin = userHelper.getIsLogin() // 從 localStorage 獲取 userIsLogin
 
-  // console.log('初次載入的 userProfile:', userProfile);
-  // console.log('初次載入的 userIsLogin:', userIsLogin);
 
   if (userIsLogin && userProfile) {
     // 如果用戶已登入且有 profile 資訊，更新 store 狀態
@@ -142,19 +140,24 @@ onMounted(() => {
     loginStore.updateLoginStatus(false)
     loginStore.clearUserProfile()
   }
-  const currentUrl = window.location.href
-  const paramsExist =
-    currentUrl.includes('token') && currentUrl.includes('email')
+  // const currentUrl = window.location.href
+  // const paramsExist =
+  //   currentUrl.includes('token') && currentUrl.includes('email')
 
-  if (paramsExist) {
-    tokenVerfy(currentUrl)
-    console.log('URL 參數存在，執行驗證程序')
-  }
+  // if (paramsExist) {
+  //   tokenVerfy(currentUrl)
+  //   console.log('URL 參數存在，執行驗證程序')
+  // }
 
   const needsPasswordReset = localStorage.getItem('needsPasswordReset') === 'true';
     if (needsPasswordReset) {
         showResetPassword.value = true;
         localStorage.removeItem('needsPasswordReset'); // 清理標記
+    }
+    const needsLogin = localStorage.getItem('needsLogin') === 'true';
+    if (needsLogin) {
+        showLoginDialog();
+        localStorage.removeItem('needsLogin'); // 清理標記
     }
 })
 
@@ -179,6 +182,8 @@ const logout = () => {
     .then((response) => {
       console.log('成功登出')
 
+      
+
       // 清除 localStorage 中的相關資料
       userHelper.removeLogin()
 
@@ -187,6 +192,17 @@ const logout = () => {
       // loginStore.setIsLogin(false) // 設定登出狀態
       // loginStore.setUserEmail('') // 清空用戶電郵
       userHelper.removeLogin(false)
+
+      testSrv.backendUserLogout()
+        .then(() => {
+          console.log('後台 cookie 清理完成')
+          localStorage.removeItem('cieebo-admin-user');
+          localStorage.removeItem('isAdmin');
+          localStorage.removeItem('cieeil');
+        })
+        .catch((error) => {
+          console.log('清理後台 cookie 時發生錯誤：', error)
+        })
 
       // 導回登入頁面或首頁
       router.push('/')
@@ -226,7 +242,7 @@ const logout = () => {
         ></div>
         <Icon name="ic:round-keyboard-arrow-down" class="icon ml-1s" />
         <ul
-          class="submenuItem hidden border-t-2 border-logoColor bg-white py-3 group-hover:block"
+          class="submenuItem list-none hidden border-t-2 border-logoColor bg-white py-3 group-hover:block"
         >
           <li
             v-if="loginStore.userProfile.isAdmin"
@@ -393,4 +409,14 @@ const logout = () => {
 .basement {
   bottom: -30px;
 }
+// ul {
+//   list-style-type: none; /* 讓無序列表恢復圓點樣式 */
+// }
+
+// ol {
+//   list-style-type: none; /* 讓有序列表恢復數字樣式 */
+// }
+// li {
+//   list-style-type: none; /* 讓有序列表恢復數字樣式 */
+// }
 </style>
